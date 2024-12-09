@@ -9,7 +9,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }} # Set DATABASE_URL from GitHub secrets
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
     steps:
       - name: Checkout code
