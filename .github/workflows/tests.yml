@@ -3,23 +3,28 @@ name: Run Tests
 on:
   pull_request:
     branches:
-      - main # Specify the branch you want to protect
+      - main
 
 jobs:
   test:
-    runs-on: ubuntu-latest # This will run the job on the latest Ubuntu environment
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }} # Set DATABASE_URL from GitHub secrets
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2 # This checks out your repository's code so that GitHub Actions can work with it
+        uses: actions/checkout@v2
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "18" # Specify the version of Node.js you are using (adjust as needed)
+          node-version: "18"
 
       - name: Install dependencies
-        run: npm install # Or 'yarn install' if you use Yarn
+        run: npm install
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
 
       - name: Run tests
-        run: npm run test # This will run your tests (adjust based on your test setup)
+        run: npm test
