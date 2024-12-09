@@ -1,5 +1,4 @@
-const { getToppings } = require("../utils/helpers");
-import prisma from "../clients/prismaClient";
+import { getToppings } from "../utils/helpers";
 
 describe("Topping Model", () => {
   it("should retrieve a list of toppings", async () => {
@@ -8,8 +7,4 @@ describe("Topping Model", () => {
     // Ensure that toppings is an array
     expect(toppings).toBeInstanceOf(Array);
   });
-});
-
-afterAll(async () => {
-  await prisma.$disconnect();
 });

@@ -1,4 +1,4 @@
-const { getPizzas } = require("../utils/helpers");
+import { getPizzas } from "../utils/helpers";
 
 describe("Pizza Model", () => {
   it("should retrieve a list of pizzas", async () => {
