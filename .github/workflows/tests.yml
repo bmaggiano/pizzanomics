@@ -1,0 +1,25 @@
+name: Run Tests
+
+on:
+  pull_request:
+    branches:
+      - main # Specify the branch you want to protect
+
+jobs:
+  test:
+    runs-on: ubuntu-latest # This will run the job on the latest Ubuntu environment
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2 # This checks out your repository's code so that GitHub Actions can work with it
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16" # Specify the version of Node.js you are using (adjust as needed)
+
+      - name: Install dependencies
+        run: npm install # Or 'yarn install' if you use Yarn
+
+      - name: Run tests
+        run: npm test # This will run your tests (adjust based on your test setup)
