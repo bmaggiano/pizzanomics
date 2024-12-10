@@ -1,7 +1,8 @@
-import { Button } from "@/components/ui/button";
 import { Pizza, HopOff } from "lucide-react";
 import MobileNavigation from "./mobileNav";
 import Image from "next/image";
+import IsAuthenticated from "./isAuthenticated";
+import Link from "next/link";
 
 const navItems = [
   { name: "Pizzas", href: "#pizzas", icon: <Pizza /> },
@@ -12,15 +13,17 @@ export default function Navbar() {
   return (
     <div className="bg-white">
       <nav className="flex justify-between items-center p-4">
-        <div className="flex items-center sm:justify-between w-full">
-          <Image
-            src="/pizza.png"
-            alt="Pizzanomics Logo"
-            height={25}
-            width={25}
-            className="mr-2"
-          />
-          <h1 className="text-2xl tracking-tight font-bold">Pizzanomics</h1>
+        <div className="flex items-center sm:justify-between w-full gap-4">
+          <Link className="flex items-center" href="/">
+            <Image
+              src="/pizza.png"
+              alt="Pizzanomics Logo"
+              height={25}
+              width={25}
+              className="mr-2"
+            />
+            <h1 className="text-2xl tracking-tight font-bold">Pizzanomics</h1>
+          </Link>
           {/* for desktop */}
           <div className="hidden sm:flex sm:justify-between sm:w-full">
             <ul className="ml-6 flex items-center gap-4">
@@ -35,9 +38,7 @@ export default function Navbar() {
                 </li>
               ))}
             </ul>
-            <Button className="font-semibold" variant={"outline"}>
-              Login
-            </Button>
+            <IsAuthenticated />
           </div>
         </div>
         {/* for mobile */}
