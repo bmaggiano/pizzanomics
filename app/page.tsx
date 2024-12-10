@@ -14,9 +14,6 @@ export default async function Home() {
       <Hero />
       <Pizzas pizzas={pizzas} />
       <Toppings toppings={toppings} />
-      <div className="mt-60" id="toppings">
-        toppings
-      </div>
     </>
   );
 }
