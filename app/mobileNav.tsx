@@ -6,7 +6,6 @@ import { NavigationMenu } from "@/components/ui/navigation-menu";
 import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetHeader,
   SheetTitle,

@@ -1,16 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { NavigationMenu } from "@/components/ui/navigation-menu";
-import { Separator } from "@/components/ui/separator";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { Menu, Pizza, HopOff } from "lucide-react";
+import { Pizza, HopOff } from "lucide-react";
 import MobileNavigation from "./mobileNav";
+import Image from "next/image";
 
 const navItems = [
   { name: "Pizzas", href: "#pizzas", icon: <Pizza /> },
@@ -22,11 +13,17 @@ export default function Navbar() {
     <div className="bg-white">
       <nav className="flex justify-between items-center p-4">
         <div className="flex items-center sm:justify-between w-full">
-          <img src="/pizza.png" alt="Pizzanomics Logo" className="h-8 mr-4" />
+          <Image
+            src="/pizza.png"
+            alt="Pizzanomics Logo"
+            height={25}
+            width={25}
+            className="mr-2"
+          />
           <h1 className="text-2xl tracking-tight font-bold">Pizzanomics</h1>
           {/* for desktop */}
           <div className="hidden sm:flex sm:justify-between sm:w-full">
-            <ul className="ml-4 flex items-center gap-4">
+            <ul className="ml-6 flex items-center gap-4">
               {navItems.map((item) => (
                 <li key={item.name}>
                   <a

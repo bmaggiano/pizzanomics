@@ -1,4 +1,3 @@
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Topping } from "./types/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";

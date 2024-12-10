@@ -1,9 +1,7 @@
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Card,
-  CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -55,24 +53,6 @@ export default function Pizzas({ pizzas }: { pizzas: Pizza[] }) {
                   </CardDescription>
                 </CardHeader>
               </Card>
-              // <Card key={pizza.id} className="max">
-              //   <div className="flex flex-col items-start">
-              //     <Image
-              //       src={
-              //         pizza?.imageUrl || "/pizza.png" // Default image if no imageUrl is available
-              //       }
-              //       alt={pizza.name}
-              //       width={200}
-              //       height={200}
-              //       className="rounded-lg"
-              //     />
-              //     <p className="text-xl font-bold">{pizza.name}</p>
-              //     <p>{pizza?.description || "No description available."}</p>
-              //     <p>
-              //       {pizza.toppings?.map((topping) => topping.name).join(", ")}
-              //     </p>
-              //   </div>
-              // </Card>
             ))}
           </div>
           <ScrollBar orientation="horizontal" />
