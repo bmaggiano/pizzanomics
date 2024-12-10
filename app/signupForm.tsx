@@ -45,9 +45,9 @@ export default function SignUpForm() {
 
     const result = await signUp(
       formData.name,
-      formData.role,
       formData.email,
-      formData.password
+      formData.password,
+      formData.role
     );
     setIsLoading(false);
 
