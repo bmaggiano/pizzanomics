@@ -12,6 +12,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Menu, Pizza, HopOff } from "lucide-react";
+import IsAuthenticated from "./isAuthenticated";
 
 const navItems = [
   { name: "Pizzas", href: "#pizzas", icon: <Pizza /> },
@@ -43,9 +44,7 @@ export default function MobileNavigation() {
           </SheetTitle>
         </SheetHeader>
         <div className="flex flex-col gap-4 p-6">
-          <Button className="text-lg font-semibold" variant={"outline"}>
-            Log in
-          </Button>
+          <IsAuthenticated />
           <Separator />
 
           <NavigationMenu>
