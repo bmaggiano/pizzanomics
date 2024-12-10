@@ -87,6 +87,28 @@ describe("signUp", () => {
       path: "/",
     });
   });
+  it("should return an error if the user already exists", async () => {
+    (prisma.user.findUnique as jest.Mock).mockResolvedValue({
+      id: 1,
+      email: "test@example.com",
+    });
+
+    const result = await signUp(
+      "Test User",
+      "test@example.com",
+      "password123",
+      "owner"
+    );
+
+    expect(result).toEqual({
+      success: false,
+      message: "User already exists",
+    });
+    expect(prisma.user.findUnique).toHaveBeenCalledWith({
+      where: { email: "test@example.com" },
+    });
+    expect(prisma.user.create).not.toHaveBeenCalled();
+  });
 });
 
 describe("logout function", () => {
