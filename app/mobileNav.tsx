@@ -1,6 +1,3 @@
-"use client";
-
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { NavigationMenu } from "@/components/ui/navigation-menu";
 import { Separator } from "@/components/ui/separator";
@@ -12,6 +9,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Menu, Pizza, HopOff } from "lucide-react";
+import IsAuthenticated from "./isAuthenticated";
 
 const navItems = [
   { name: "Pizzas", href: "#pizzas", icon: <Pizza /> },
@@ -19,17 +17,8 @@ const navItems = [
 ];
 
 export default function MobileNavigation() {
-  const [isOpen, setIsOpen] = useState(false);
-  const handleNavigation = (href: string) => {
-    const targetElement = document.querySelector(href);
-    if (targetElement) {
-      targetElement.scrollIntoView({ behavior: "smooth" });
-    }
-    setIsOpen(false);
-  };
-
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+    <Sheet>
       <SheetTrigger asChild>
         <Button variant="outline" size="icon" className="lg:hidden">
           <Menu className="h-6 w-6" />
@@ -43,9 +32,7 @@ export default function MobileNavigation() {
           </SheetTitle>
         </SheetHeader>
         <div className="flex flex-col gap-4 p-6">
-          <Button className="text-lg font-semibold" variant={"outline"}>
-            Log in
-          </Button>
+          <IsAuthenticated />
           <Separator />
 
           <NavigationMenu>
@@ -60,10 +47,6 @@ export default function MobileNavigation() {
                     {item.icon}
                     <a
                       href={item.href}
-                      onClick={(e) => {
-                        e.preventDefault(); // Prevent default scrolling
-                        handleNavigation(item.href);
-                      }}
                       className="text-lg text-gray-800 font-semibold text-base hover:text-gray-700"
                     >
                       {item.name}
