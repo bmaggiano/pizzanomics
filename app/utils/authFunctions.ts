@@ -1,10 +1,8 @@
 "use server";
 
-import { PrismaClient } from "@prisma/client";
+import prisma from "../clients/prismaClient";
 import { hashPassword, comparePasswords, generateToken } from "./auth";
 import { cookies } from "next/headers";
-
-const prisma = new PrismaClient();
 
 export async function signUp(
   name: string,
@@ -13,7 +11,9 @@ export async function signUp(
   role: string
 ) {
   try {
-    const existingUser = await prisma.user.findUnique({ where: { email } });
+    const existingUser = await prisma.user.findUnique({
+      where: { email: email },
+    });
     if (existingUser) {
       return { success: false, message: "User already exists" };
     }
@@ -37,7 +37,7 @@ export async function signUp(
 
     return {
       success: true,
-      user: { id: user.id, email: user.email, role: user.role },
+      user: { email: user.email, role: user.role },
     };
   } catch (error) {
     console.error("Sign up error:", error);
