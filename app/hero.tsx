@@ -39,8 +39,8 @@ export default function Hero() {
             Explore our exquisite selection of handcrafted pizzas and premium
             toppings.
           </p>
-          <Button variant={"outline"} className="text-black">
-            Order Now
+          <Button variant={"outline"} className="text-black font-semibold">
+            Get Started
           </Button>
         </div>
       </div>
