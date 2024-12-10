@@ -5,7 +5,9 @@ export const getToppings = async () => {
 };
 
 export const getPizzas = async () => {
-  const pizzas = await prisma.pizza.findMany();
+  const pizzas = await prisma.pizza.findMany({
+    include: { toppings: true },
+  });
   return pizzas;
 };
 
