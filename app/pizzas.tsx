@@ -36,7 +36,6 @@ export default function Pizzas({ pizzas }: { pizzas: Pizza[] }) {
                     alt={pizza.name}
                     width={220}
                     height={200}
-                    layout="intrinsic"
                   />
                   <CardTitle className="p-2">{pizza.name}</CardTitle>
                   <ScrollArea className="p-2 w-[100%] whitespace-nowrap rounded-md">
