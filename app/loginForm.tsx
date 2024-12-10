@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -74,7 +75,16 @@ export default function LoginForm() {
               Log in
             </Button>
             {message && (
-              <p className="mt-2 text-sm text-center text-red-600">{message}</p>
+              <p
+                className={cn(
+                  "mt-2 text-sm text-center",
+                  message.includes("successful")
+                    ? "text-green-600"
+                    : "text-red-600"
+                )}
+              >
+                {message}
+              </p>
             )}
           </form>
           <div className="flex justify-center gap-2">
