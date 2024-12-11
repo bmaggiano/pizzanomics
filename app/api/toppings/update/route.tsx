@@ -8,7 +8,7 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        message: "Please log in or sign up to access this resource",
+        message: roleResponse.statusText,
       },
       { status: 401 }
     );

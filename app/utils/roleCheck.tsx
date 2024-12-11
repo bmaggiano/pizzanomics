@@ -6,11 +6,13 @@ import { verifyToken } from "./auth";
 export async function authorizeRole(req: NextRequest, requiredRole: string) {
   const token = req.cookies.get("auth_token")?.value;
 
-  console.log(token);
   if (!token) {
     return NextResponse.json(
       { message: "Please log in or sign up to access this resource" },
-      { status: 401 }
+      {
+        status: 401,
+        statusText: "Please log in or sign up to access this resource",
+      }
     );
   }
 
@@ -24,7 +26,7 @@ export async function authorizeRole(req: NextRequest, requiredRole: string) {
   if (!userId) {
     return NextResponse.json(
       { message: "User not authenticated" },
-      { status: 401 }
+      { status: 401, statusText: "User not authenticated" }
     );
   }
 
@@ -40,7 +42,10 @@ export async function authorizeRole(req: NextRequest, requiredRole: string) {
   if (user.role !== requiredRole) {
     return NextResponse.json(
       { message: `Only ${requiredRole}s can perform this action` },
-      { status: 403 }
+      {
+        status: 403,
+        statusText: `Only ${requiredRole}s can perform this action`,
+      }
     );
   }
 

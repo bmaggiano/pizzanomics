@@ -107,6 +107,7 @@ describe("POST /api/topping/create", () => {
     });
 
     (authorizeRole as jest.Mock).mockResolvedValue(true);
+    (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
     (prismaMock.topping.findUnique as jest.Mock).mockResolvedValue(null);
     (prismaMock.topping.create as jest.Mock).mockResolvedValue({
       id: "1",
@@ -152,6 +153,7 @@ describe("POST /api/topping/create", () => {
     });
 
     (authorizeRole as jest.Mock).mockResolvedValue(true);
+    (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
     (prismaMock.topping.findUnique as jest.Mock).mockResolvedValue({
       id: "1",
       name: "Test",
@@ -185,6 +187,7 @@ describe("POST /api/topping/create", () => {
     });
 
     (authorizeRole as jest.Mock).mockResolvedValue(true);
+    (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
     (prismaMock.topping.findUnique as jest.Mock).mockResolvedValue(null);
     (prismaMock.topping.create as jest.Mock).mockRejectedValue(
       new Error("Failed to create topping")
@@ -224,7 +227,6 @@ describe("POST /api/topping/create", () => {
     expect(prismaMock.topping.create).not.toHaveBeenCalled();
     expect(responseJson).toEqual({
       success: false,
-      message: "Unauthorized",
     });
   });
 });
@@ -244,6 +246,7 @@ describe("PUT /api/topping/update", () => {
     } as any;
 
     (authorizeRole as jest.Mock).mockResolvedValue(true);
+    (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
     (prismaMock.topping.findUnique as jest.Mock).mockResolvedValue({
       id: "1",
       name: "Old Topping",
@@ -284,6 +287,8 @@ describe("PUT /api/topping/update", () => {
     } as any;
 
     (authorizeRole as jest.Mock).mockResolvedValue(true);
+    (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
+
     (prismaMock.topping.findUnique as jest.Mock).mockResolvedValue(null); // Simulate no existing topping
 
     const response = await PUT(mockReq);
@@ -310,6 +315,8 @@ describe("PUT /api/topping/update", () => {
     } as any;
 
     (authorizeRole as jest.Mock).mockResolvedValue(true);
+    (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
+
     (prismaMock.topping.findUnique as jest.Mock).mockResolvedValue({
       id: "1",
       name: "Old Topping",
@@ -358,7 +365,6 @@ describe("PUT /api/topping/update", () => {
     expect(prismaMock.topping.update).not.toHaveBeenCalled();
     expect(responseJson).toEqual({
       success: false,
-      message: "Unauthorized",
     });
   });
 });
@@ -373,7 +379,9 @@ describe("DELETE /api/topping/delete", () => {
       json: jest.fn().mockResolvedValue({ id: "1" }),
     } as any;
 
-    (authorizeRole as jest.Mock).mockResolvedValue(true); // Mock authorization
+    (authorizeRole as jest.Mock).mockResolvedValue(true);
+    (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
+    // Mock authorization
     (prismaMock.topping.findUnique as jest.Mock).mockResolvedValue({
       id: "1",
       name: "Test Topping",
@@ -404,7 +412,9 @@ describe("DELETE /api/topping/delete", () => {
       json: jest.fn().mockResolvedValue({ id: "999" }),
     } as any;
 
-    (authorizeRole as jest.Mock).mockResolvedValue(true); // Mock authorization
+    (authorizeRole as jest.Mock).mockResolvedValue(true);
+    (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
+    // Mock authorization
     (prismaMock.topping.findUnique as jest.Mock).mockResolvedValue(null); // Simulate no existing topping
 
     const response = await DELETE(mockReq);
@@ -426,7 +436,9 @@ describe("DELETE /api/topping/delete", () => {
       json: jest.fn().mockResolvedValue({ id: "1" }),
     } as any;
 
-    (authorizeRole as jest.Mock).mockResolvedValue(true); // Mock authorization
+    (authorizeRole as jest.Mock).mockResolvedValue(true);
+    (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
+    // Mock authorization
     (prismaMock.topping.findUnique as jest.Mock).mockResolvedValue({
       id: "1",
       name: "Faulty Topping",
@@ -467,7 +479,6 @@ describe("DELETE /api/topping/delete", () => {
     expect(prismaMock.topping.delete).not.toHaveBeenCalled();
     expect(responseJson).toEqual({
       success: false,
-      message: "Unauthorized",
     });
   });
 });

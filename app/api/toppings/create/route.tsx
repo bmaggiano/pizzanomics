@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        message: "Please log in or sign up to access this resource",
+        message: roleResponse.statusText,
       },
       { status: 401 }
     );
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
       message: "Topping added successfully!",
       topping: newTopping,
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { success: false, message: "Failed to add topping" },
       { status: 500 }
