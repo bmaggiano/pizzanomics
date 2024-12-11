@@ -11,7 +11,7 @@ export default async function Home() {
     <>
       <Hero />
       <Pizzas pizzas={pizzas} />
-      <Toppings toppings={toppings} />
+      <Toppings toppings={toppings} pizzas={pizzas} />
     </>
   );
 }
