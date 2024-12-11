@@ -83,7 +83,7 @@ export default function AddTopping({ pizzas }: { pizzas: Pizza[] }) {
             <Label htmlFor="topping">Topping</Label>
             <Input
               id="toppingName"
-              placeholder="pepperoni"
+              placeholder="Pepperoni"
               value={toppingName}
               onChange={(e) => setToppingName(e.target.value)}
               required
