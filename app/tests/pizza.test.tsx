@@ -1,10 +1,224 @@
+import { POST } from "../api/pizzas/create/route";
+// import { PUT } from "../api/pizzas/update/route";
+// import { DELETE } from "../api/pizzas/delete/route";
+import prisma from "../clients/prismaClient";
 import { getPizzas } from "../utils/helpers";
+import { authorizeRole } from "../utils/roleCheck";
+import { NextRequest, NextResponse } from "next/server";
 
-describe("Pizza Model", () => {
+jest.mock("../clients/prismaClient", () => ({
+  pizza: {
+    findUnique: jest.fn(),
+    findMany: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+  },
+}));
+
+jest.mock("../utils/roleCheck", () => ({
+  authorizeRole: jest.fn(),
+}));
+
+const prismaMock = prisma as jest.Mocked<typeof prisma>;
+
+describe("getPizzas", () => {
+  beforeEach(() => {
+    jest.clearAllMocks(); // Clear mocks before each test
+  });
+
   it("should retrieve a list of pizzas", async () => {
-    const pizzas = await getPizzas(); // Use await to get the resolved data
+    const mockPizzas = [
+      { id: "1", name: "Cheese Pizza", pizzas: [{ id: "1", name: "Cheese" }] },
+      {
+        id: "2",
+        name: "Pepperoni Pizza",
+        pizzas: [{ id: "2", name: "Pepperoni" }],
+      },
+    ];
 
-    // Ensure that pizzas is an array
+    (prismaMock.pizza.findMany as jest.Mock).mockResolvedValue(mockPizzas);
+
+    const pizzas = await getPizzas(); // Call the function
+
+    // Assert the function returns an array
     expect(pizzas).toBeInstanceOf(Array);
+    // Assert the function returns the correct data
+    expect(pizzas).toEqual(mockPizzas);
+    // Ensure that the mock was called once
+    expect(prismaMock.pizza.findMany).toHaveBeenCalledTimes(1);
+    // Ensure the correct arguments were passed
+    expect(prismaMock.pizza.findMany).toHaveBeenCalledWith({
+      include: { toppings: true },
+    });
+  });
+
+  it("should return an empty array if no pizzas are found", async () => {
+    (prismaMock.pizza.findMany as jest.Mock).mockResolvedValue([]); // Mock no data found
+
+    const pizzas = await getPizzas(); // Call the function
+
+    // Assert the function returns an empty array
+    expect(pizzas).toEqual([]);
+  });
+
+  it("should handle errors gracefully", async () => {
+    (prismaMock.pizza.findMany as jest.Mock).mockImplementation(() => {
+      throw new Error("Failed to fetch pizzas");
+    }); // Simulate a Failed to fetch pizzas
+
+    await expect(getPizzas()).rejects.toThrow("Failed to fetch pizzas");
+  });
+});
+
+describe("POST /api/pizzas/create", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should create a new pizza successfully", async () => {
+    const mockReq = new NextRequest("http://localhost/api/pizzas/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: "Test",
+        description: "test description",
+        imageUrl: "test image url",
+        toppings: [{ name: "Test topping" }],
+      }),
+    });
+
+    (authorizeRole as jest.Mock).mockResolvedValue(true);
+    (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
+    (prismaMock.pizza.findUnique as jest.Mock).mockResolvedValue(null);
+    (prismaMock.pizza.create as jest.Mock).mockResolvedValue({
+      id: "1",
+      name: "Test",
+      description: "test description",
+      imageUrl: "test image url",
+      toppings: [{ id: "1", name: "Test topping" }],
+    });
+
+    const response = await POST(mockReq);
+    expect(response).toBeInstanceOf(NextResponse);
+    const responseJson = await response.json();
+
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
+    expect(prismaMock.pizza.findUnique).toHaveBeenCalledWith({
+      where: {
+        name: "Test",
+      },
+    });
+    expect(prismaMock.pizza.create).toHaveBeenCalledWith({
+      data: {
+        name: "Test",
+        description: "test description",
+        imageUrl: "test image url",
+        toppings: { connect: [{ name: "Test topping" }] },
+      },
+    });
+    expect(responseJson).toEqual({
+      success: true,
+      message: "Pizza added successfully!",
+      pizza: {
+        id: "1",
+        name: "Test",
+        description: "test description",
+        imageUrl: "test image url",
+        toppings: [{ id: "1", name: "Test topping" }],
+      },
+    });
+  });
+
+  it("should not create a pizza if one already exists", async () => {
+    const mockReq = new NextRequest("http://localhost/api/pizzas/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: "Test",
+        toppings: [{ name: "Test topping" }],
+      }),
+    });
+
+    (authorizeRole as jest.Mock).mockResolvedValue(true);
+    (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
+    (prismaMock.pizza.findUnique as jest.Mock).mockResolvedValue({
+      id: "1",
+      name: "Test",
+    });
+
+    const response = await POST(mockReq);
+    expect(response).toBeInstanceOf(NextResponse);
+    const responseJson = await response.json();
+
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
+    expect(prismaMock.pizza.findUnique).toHaveBeenCalledWith({
+      where: { name: "Test" },
+    });
+    expect(prismaMock.pizza.create).not.toHaveBeenCalled();
+    expect(responseJson).toEqual({
+      success: false,
+      message: "Pizza already exists",
+    });
+  });
+
+  it("should handle errors during creation", async () => {
+    const mockReq = new NextRequest("http://localhost/api/pizzas/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: "Invalid Pizza",
+        toppings: [{ name: "Invalid toppings" }],
+      }),
+    });
+
+    (authorizeRole as jest.Mock).mockResolvedValue(true);
+    (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
+    (prismaMock.pizza.findUnique as jest.Mock).mockResolvedValue(null);
+    (prismaMock.pizza.create as jest.Mock).mockRejectedValue(
+      new Error("Failed to create pizza")
+    );
+
+    const response = await POST(mockReq);
+    expect(response).toBeInstanceOf(NextResponse);
+    const responseJson = await response.json();
+
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
+    expect(responseJson).toEqual({
+      success: false,
+      message: "Failed to add pizza",
+    });
+  });
+
+  it("should not create a pizza if user is not authorized", async () => {
+    const mockReq = new NextRequest("http://localhost/api/pizzas/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: "Test",
+        pizzas: [{ name: "Test topping" }],
+      }),
+    });
+
+    (authorizeRole as jest.Mock).mockResolvedValue(false);
+
+    const response = await POST(mockReq);
+    expect(response).toBeInstanceOf(NextResponse);
+    const responseJson = await response.json();
+
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
+    expect(prismaMock.pizza.findUnique).not.toHaveBeenCalled();
+    expect(prismaMock.pizza.create).not.toHaveBeenCalled();
+    expect(responseJson).toEqual({
+      success: false,
+    });
   });
 });
