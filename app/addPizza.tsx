@@ -104,7 +104,7 @@ export default function AddPizza({ toppings }: { toppings: Topping[] }) {
           </div>
           <div className="space-y-2">
             <Label htmlFor="pizzaImage">
-              Pizza Image (only unsplash images allowed)
+              Pizza image URL (only unsplash images allowed)
             </Label>
             <Input
               id="pizzaImage"
