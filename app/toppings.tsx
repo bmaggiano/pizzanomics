@@ -61,6 +61,7 @@ function EditTopping({
         toast({
           title: "Topping edited successfully!",
         });
+        setMessage("");
         router.refresh();
         setOpen(false);
       } else {
@@ -88,6 +89,7 @@ function EditTopping({
         toast({
           title: "Topping deleted successfully!",
         });
+        setMessage("");
         router.refresh();
         setOpen(false);
       } else {
