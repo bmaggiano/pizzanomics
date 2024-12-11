@@ -40,7 +40,6 @@ export async function signUp(
       user: { email: user.email, role: user.role },
     };
   } catch (error) {
-    console.error("Sign up error:", error);
     return { success: false, message: "An error occurred during sign up" };
   }
 }
@@ -74,7 +73,6 @@ export async function login(email: string, password: string) {
       user: { id: user.id, email: user.email, role: user.role },
     };
   } catch (error) {
-    console.error("Login error:", error);
     return { success: false, message: "An error occurred during login" };
   }
 }
@@ -93,7 +91,6 @@ export async function logout() {
 
     return { success: true, message: "Logged out successfully" };
   } catch (error) {
-    console.error("Logout error:", error);
     return { success: false, message: "An error occurred during logout" };
   }
 }
