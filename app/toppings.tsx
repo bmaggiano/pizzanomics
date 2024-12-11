@@ -215,7 +215,8 @@ export default function Toppings({
                   {topping?.pizzas && topping?.pizzas?.length > 0 ? (
                     <>
                       <p className="text-xs text-gray-500">
-                        Used in {topping?.pizzas?.length} pizzas
+                        Used in {topping?.pizzas?.length} pizza
+                        {topping?.pizzas?.length > 1 && "s"}
                       </p>
                       <AvatarCircles
                         numPeople={topping?.pizzas?.length ?? 0}
