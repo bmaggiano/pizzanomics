@@ -29,7 +29,6 @@ model Pizza {
 model Topping {
   id          Int      @id @default(autoincrement())
   name        String   @unique
-  imageUrl    String?
   createdAt   DateTime @default(now())
   pizzas      Pizza[]
 }
