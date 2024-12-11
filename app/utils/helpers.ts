@@ -8,7 +8,7 @@ export const getToppings = async (): Promise<Topping[]> => {
       include: { pizzas: true },
     });
     return toppings as Topping[];
-  } catch (error) {
+  } catch {
     throw new Error("Failed to fetch toppings");
   }
 };
@@ -20,7 +20,7 @@ export const getPizzas = async (): Promise<Pizza[]> => {
       include: { toppings: true },
     });
     return pizzas as Pizza[];
-  } catch (error) {
+  } catch {
     throw new Error("Failed to fetch pizzas");
   }
 };
@@ -30,7 +30,7 @@ export const getUsers = async (): Promise<User[]> => {
   try {
     const users = await prisma.user.findMany();
     return users as User[];
-  } catch (error) {
+  } catch {
     throw new Error("Failed to fetch users");
   }
 };

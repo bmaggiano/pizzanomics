@@ -46,7 +46,7 @@ export async function PUT(req: NextRequest) {
       success: true,
       message: "Topping updated successfully!",
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { success: false, message: "Failed to update topping" },
       { status: 500 }

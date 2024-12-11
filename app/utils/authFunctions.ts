@@ -39,7 +39,7 @@ export async function signUp(
       success: true,
       user: { email: user.email, role: user.role },
     };
-  } catch (error) {
+  } catch {
     return { success: false, message: "An error occurred during sign up" };
   }
 }
@@ -72,7 +72,7 @@ export async function login(email: string, password: string) {
       success: true,
       user: { id: user.id, email: user.email, role: user.role },
     };
-  } catch (error) {
+  } catch {
     return { success: false, message: "An error occurred during login" };
   }
 }
@@ -90,7 +90,7 @@ export async function logout() {
     });
 
     return { success: true, message: "Logged out successfully" };
-  } catch (error) {
+  } catch {
     return { success: false, message: "An error occurred during logout" };
   }
 }

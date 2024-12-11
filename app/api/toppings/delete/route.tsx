@@ -37,7 +37,7 @@ export async function DELETE(req: NextRequest) {
         { status: 400 }
       );
     }
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { success: false, message: "Failed to delete topping" },
       { status: 500 }

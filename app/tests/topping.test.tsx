@@ -3,7 +3,6 @@ import { PUT } from "../api/toppings/update/route";
 import { DELETE } from "../api/toppings/delete/route";
 import prisma from "../clients/prismaClient";
 import { getToppings } from "../utils/helpers";
-import jwt from "jsonwebtoken";
 import { authorizeRole } from "../utils/roleCheck";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -243,7 +242,7 @@ describe("PUT /api/topping/update", () => {
         name: "Updated Topping",
         pizzas: [{ id: "101" }, { id: "102" }],
       }),
-    } as any;
+    } as Partial<NextRequest>;
 
     (authorizeRole as jest.Mock).mockResolvedValue(true);
     (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
@@ -257,7 +256,7 @@ describe("PUT /api/topping/update", () => {
       pizzas: [],
     });
 
-    const response = await PUT(mockReq);
+    const response = await PUT(mockReq as NextRequest);
     const responseJson = await response.json(); // Convert NextResponse to JSON
 
     expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
@@ -284,14 +283,14 @@ describe("PUT /api/topping/update", () => {
         name: "Nonexistent Topping",
         pizzas: [{ id: "101" }],
       }),
-    } as any;
+    } as Partial<NextRequest>;
 
     (authorizeRole as jest.Mock).mockResolvedValue(true);
     (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
 
     (prismaMock.topping.findUnique as jest.Mock).mockResolvedValue(null); // Simulate no existing topping
 
-    const response = await PUT(mockReq);
+    const response = await PUT(mockReq as NextRequest);
     const responseJson = await response.json(); // Convert NextResponse to JSON
 
     expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
@@ -312,7 +311,7 @@ describe("PUT /api/topping/update", () => {
         name: "Faulty Topping",
         pizzas: [{ id: "101" }],
       }),
-    } as any;
+    } as Partial<NextRequest>;
 
     (authorizeRole as jest.Mock).mockResolvedValue(true);
     (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
@@ -326,7 +325,7 @@ describe("PUT /api/topping/update", () => {
       throw new Error("Failed to update topping");
     }); // Simulate an error during update
 
-    const response = await PUT(mockReq);
+    const response = await PUT(mockReq as NextRequest);
     const responseJson = await response.json(); // Convert NextResponse to JSON
 
     expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
@@ -353,11 +352,11 @@ describe("PUT /api/topping/update", () => {
         name: "Updated Topping",
         pizzas: [{ id: "101" }, { id: "102" }],
       }),
-    } as any;
+    } as Partial<NextRequest>;
 
     (authorizeRole as jest.Mock).mockResolvedValue(false);
 
-    const response = await PUT(mockReq);
+    const response = await PUT(mockReq as NextRequest);
     const responseJson = await response.json(); // Convert NextResponse to JSON
 
     expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
@@ -377,7 +376,7 @@ describe("DELETE /api/topping/delete", () => {
   it("should delete a topping successfully", async () => {
     const mockReq = {
       json: jest.fn().mockResolvedValue({ id: "1" }),
-    } as any;
+    } as Partial<NextRequest>;
 
     (authorizeRole as jest.Mock).mockResolvedValue(true);
     (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
@@ -391,7 +390,7 @@ describe("DELETE /api/topping/delete", () => {
       name: "Test Topping",
     }); // Simulate successful deletion
 
-    const response = await DELETE(mockReq);
+    const response = await DELETE(mockReq as NextRequest);
     const responseJson = await response.json(); // Convert NextResponse to JSON
 
     expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
@@ -410,14 +409,14 @@ describe("DELETE /api/topping/delete", () => {
   it("should return an error if the topping does not exist", async () => {
     const mockReq = {
       json: jest.fn().mockResolvedValue({ id: "999" }),
-    } as any;
+    } as Partial<NextRequest>;
 
     (authorizeRole as jest.Mock).mockResolvedValue(true);
     (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
     // Mock authorization
     (prismaMock.topping.findUnique as jest.Mock).mockResolvedValue(null); // Simulate no existing topping
 
-    const response = await DELETE(mockReq);
+    const response = await DELETE(mockReq as NextRequest);
     const responseJson = await response.json(); // Convert NextResponse to JSON
 
     expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
@@ -434,7 +433,7 @@ describe("DELETE /api/topping/delete", () => {
   it("should handle errors during the delete operation", async () => {
     const mockReq = {
       json: jest.fn().mockResolvedValue({ id: "1" }),
-    } as any;
+    } as Partial<NextRequest>;
 
     (authorizeRole as jest.Mock).mockResolvedValue(true);
     (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
@@ -448,7 +447,7 @@ describe("DELETE /api/topping/delete", () => {
       throw new Error("Failed to fetch toppings");
     }); // Simulate an error during delete
 
-    const response = await DELETE(mockReq);
+    const response = await DELETE(mockReq as NextRequest);
     const responseJson = await response.json(); // Convert NextResponse to JSON
 
     expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
@@ -467,11 +466,11 @@ describe("DELETE /api/topping/delete", () => {
   it("should not delete a topping if user is not authorized", async () => {
     const mockReq = {
       json: jest.fn().mockResolvedValue({ id: "1" }),
-    } as any;
+    } as Partial<NextRequest>;
 
     (authorizeRole as jest.Mock).mockResolvedValue(false); // Mock unauthorized user
 
-    const response = await DELETE(mockReq);
+    const response = await DELETE(mockReq as NextRequest);
     const responseJson = await response.json(); // Convert NextResponse to JSON
 
     expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");

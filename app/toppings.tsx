@@ -4,7 +4,7 @@ import { Topping, Pizza } from "./types/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
 import AddTopping from "./addTopping";
-import { Edit, Scroll } from "lucide-react";
+import { Edit } from "lucide-react";
 import {
   Dialog,
   DialogContent,
