@@ -3,6 +3,9 @@ import { PUT } from "../api/toppings/update/route";
 import { DELETE } from "../api/toppings/delete/route";
 import prisma from "../clients/prismaClient";
 import { getToppings } from "../utils/helpers";
+import jwt from "jsonwebtoken";
+import { authorizeRole } from "../utils/roleCheck";
+import { NextRequest, NextResponse } from "next/server";
 
 jest.mock("../clients/prismaClient", () => ({
   topping: {
@@ -12,6 +15,10 @@ jest.mock("../clients/prismaClient", () => ({
     update: jest.fn(),
     delete: jest.fn(),
   },
+}));
+
+jest.mock("../utils/roleCheck", () => ({
+  authorizeRole: jest.fn(),
 }));
 
 const prismaMock = prisma as jest.Mocked<typeof prisma>;
@@ -84,58 +91,77 @@ it("should handle errors gracefully", async () => {
 
 describe("POST /api/topping/create", () => {
   beforeEach(() => {
-    jest.clearAllMocks(); // Clear mocks before each test
+    jest.clearAllMocks();
   });
 
   it("should create a new topping successfully", async () => {
-    const mockReq = {
-      json: jest.fn().mockResolvedValue({
+    const mockReq = new NextRequest("http://localhost/api/topping/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
         name: "Test",
-        pizzas: [{ name: "Test" }],
+        pizzas: [{ name: "Test Pizza" }],
       }),
-    } as any;
+    });
 
-    (prismaMock.topping.findUnique as jest.Mock).mockResolvedValue(null); // No existing topping
+    (authorizeRole as jest.Mock).mockResolvedValue(true);
+    (prismaMock.topping.findUnique as jest.Mock).mockResolvedValue(null);
     (prismaMock.topping.create as jest.Mock).mockResolvedValue({
       id: "1",
       name: "Test",
-      pizzas: [],
+      pizzas: [{ id: "1", name: "Test Pizza" }],
     });
 
     const response = await POST(mockReq);
-    const responseJson = await response.json(); // Convert NextResponse to JSON
+    expect(response).toBeInstanceOf(NextResponse);
+    const responseJson = await response.json();
 
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
     expect(prismaMock.topping.findUnique).toHaveBeenCalledWith({
       where: { name: "Test" },
     });
     expect(prismaMock.topping.create).toHaveBeenCalledWith({
       data: {
         name: "Test",
-        pizzas: { connect: [{ name: "Test" }] },
+        pizzas: { connect: [{ name: "Test Pizza" }] },
       },
     });
     expect(responseJson).toEqual({
       success: true,
       message: "Topping added successfully!",
+      topping: {
+        id: "1",
+        name: "Test",
+        pizzas: [{ id: "1", name: "Test Pizza" }],
+      },
     });
   });
 
   it("should not create a topping if one already exists", async () => {
-    const mockReq = {
-      json: jest.fn().mockResolvedValue({
+    const mockReq = new NextRequest("http://localhost/api/topping/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
         name: "Test",
-        pizzas: [{ name: "Test" }],
+        pizzas: [{ name: "Test Pizza" }],
       }),
-    } as any;
+    });
 
+    (authorizeRole as jest.Mock).mockResolvedValue(true);
     (prismaMock.topping.findUnique as jest.Mock).mockResolvedValue({
       id: "1",
       name: "Test",
     });
 
     const response = await POST(mockReq);
-    const responseJson = await response.json(); // Convert NextResponse to JSON
+    expect(response).toBeInstanceOf(NextResponse);
+    const responseJson = await response.json();
 
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
     expect(prismaMock.topping.findUnique).toHaveBeenCalledWith({
       where: { name: "Test" },
     });
@@ -147,26 +173,58 @@ describe("POST /api/topping/create", () => {
   });
 
   it("should handle errors during creation", async () => {
-    // Arrange
-    const mockReq = {
-      json: jest.fn().mockResolvedValue({
+    const mockReq = new NextRequest("http://localhost/api/topping/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
         name: "Invalid Topping",
         pizzas: [{ name: "Invalid Pizza" }],
       }),
-    } as any;
+    });
 
-    (prismaMock.topping.create as jest.Mock).mockImplementation(() => {
-      throw new Error("Failed to fetch toppings");
-    }); // Simulate an error during the database operation
+    (authorizeRole as jest.Mock).mockResolvedValue(true);
+    (prismaMock.topping.findUnique as jest.Mock).mockResolvedValue(null);
+    (prismaMock.topping.create as jest.Mock).mockRejectedValue(
+      new Error("Failed to create topping")
+    );
 
-    // Act
     const response = await POST(mockReq);
-    const responseJson = await response.json(); // Convert NextResponse to JSON
+    expect(response).toBeInstanceOf(NextResponse);
+    const responseJson = await response.json();
 
-    // Assert
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
     expect(responseJson).toEqual({
       success: false,
       message: "Failed to add topping",
+    });
+  });
+
+  it("should not create a topping if user is not authorized", async () => {
+    const mockReq = new NextRequest("http://localhost/api/topping/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: "Test",
+        pizzas: [{ name: "Test Pizza" }],
+      }),
+    });
+
+    (authorizeRole as jest.Mock).mockResolvedValue(false);
+
+    const response = await POST(mockReq);
+    expect(response).toBeInstanceOf(NextResponse);
+    const responseJson = await response.json();
+
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
+    expect(prismaMock.topping.findUnique).not.toHaveBeenCalled();
+    expect(prismaMock.topping.create).not.toHaveBeenCalled();
+    expect(responseJson).toEqual({
+      success: false,
+      message: "Unauthorized",
     });
   });
 });
@@ -185,6 +243,7 @@ describe("PUT /api/topping/update", () => {
       }),
     } as any;
 
+    (authorizeRole as jest.Mock).mockResolvedValue(true);
     (prismaMock.topping.findUnique as jest.Mock).mockResolvedValue({
       id: "1",
       name: "Old Topping",
@@ -198,6 +257,7 @@ describe("PUT /api/topping/update", () => {
     const response = await PUT(mockReq);
     const responseJson = await response.json(); // Convert NextResponse to JSON
 
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
     expect(prismaMock.topping.findUnique).toHaveBeenCalledWith({
       where: { id: "1" },
     });
@@ -223,11 +283,13 @@ describe("PUT /api/topping/update", () => {
       }),
     } as any;
 
+    (authorizeRole as jest.Mock).mockResolvedValue(true);
     (prismaMock.topping.findUnique as jest.Mock).mockResolvedValue(null); // Simulate no existing topping
 
     const response = await PUT(mockReq);
     const responseJson = await response.json(); // Convert NextResponse to JSON
 
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
     expect(prismaMock.topping.findUnique).toHaveBeenCalledWith({
       where: { id: "999" },
     });
@@ -247,18 +309,20 @@ describe("PUT /api/topping/update", () => {
       }),
     } as any;
 
+    (authorizeRole as jest.Mock).mockResolvedValue(true);
     (prismaMock.topping.findUnique as jest.Mock).mockResolvedValue({
       id: "1",
       name: "Old Topping",
     }); // Simulate an existing topping
 
     (prismaMock.topping.update as jest.Mock).mockImplementation(() => {
-      throw new Error("Failed to fetch toppings");
+      throw new Error("Failed to update topping");
     }); // Simulate an error during update
 
     const response = await PUT(mockReq);
     const responseJson = await response.json(); // Convert NextResponse to JSON
 
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
     expect(prismaMock.topping.findUnique).toHaveBeenCalledWith({
       where: { id: "1" },
     });
@@ -274,6 +338,29 @@ describe("PUT /api/topping/update", () => {
       message: "Failed to update topping",
     });
   });
+
+  it("should not update a topping if user is not authorized", async () => {
+    const mockReq = {
+      json: jest.fn().mockResolvedValue({
+        id: "1",
+        name: "Updated Topping",
+        pizzas: [{ id: "101" }, { id: "102" }],
+      }),
+    } as any;
+
+    (authorizeRole as jest.Mock).mockResolvedValue(false);
+
+    const response = await PUT(mockReq);
+    const responseJson = await response.json(); // Convert NextResponse to JSON
+
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
+    expect(prismaMock.topping.findUnique).not.toHaveBeenCalled();
+    expect(prismaMock.topping.update).not.toHaveBeenCalled();
+    expect(responseJson).toEqual({
+      success: false,
+      message: "Unauthorized",
+    });
+  });
 });
 
 describe("DELETE /api/topping/delete", () => {
@@ -286,6 +373,7 @@ describe("DELETE /api/topping/delete", () => {
       json: jest.fn().mockResolvedValue({ id: "1" }),
     } as any;
 
+    (authorizeRole as jest.Mock).mockResolvedValue(true); // Mock authorization
     (prismaMock.topping.findUnique as jest.Mock).mockResolvedValue({
       id: "1",
       name: "Test Topping",
@@ -293,11 +381,12 @@ describe("DELETE /api/topping/delete", () => {
     (prismaMock.topping.delete as jest.Mock).mockResolvedValue({
       id: "1",
       name: "Test Topping",
-    });
+    }); // Simulate successful deletion
 
     const response = await DELETE(mockReq);
     const responseJson = await response.json(); // Convert NextResponse to JSON
 
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
     expect(prismaMock.topping.findUnique).toHaveBeenCalledWith({
       where: { id: "1" },
     });
@@ -315,11 +404,13 @@ describe("DELETE /api/topping/delete", () => {
       json: jest.fn().mockResolvedValue({ id: "999" }),
     } as any;
 
+    (authorizeRole as jest.Mock).mockResolvedValue(true); // Mock authorization
     (prismaMock.topping.findUnique as jest.Mock).mockResolvedValue(null); // Simulate no existing topping
 
     const response = await DELETE(mockReq);
     const responseJson = await response.json(); // Convert NextResponse to JSON
 
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
     expect(prismaMock.topping.findUnique).toHaveBeenCalledWith({
       where: { id: "999" },
     });
@@ -335,6 +426,7 @@ describe("DELETE /api/topping/delete", () => {
       json: jest.fn().mockResolvedValue({ id: "1" }),
     } as any;
 
+    (authorizeRole as jest.Mock).mockResolvedValue(true); // Mock authorization
     (prismaMock.topping.findUnique as jest.Mock).mockResolvedValue({
       id: "1",
       name: "Faulty Topping",
@@ -347,6 +439,7 @@ describe("DELETE /api/topping/delete", () => {
     const response = await DELETE(mockReq);
     const responseJson = await response.json(); // Convert NextResponse to JSON
 
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
     expect(prismaMock.topping.findUnique).toHaveBeenCalledWith({
       where: { id: "1" },
     });
@@ -356,6 +449,25 @@ describe("DELETE /api/topping/delete", () => {
     expect(responseJson).toEqual({
       success: false,
       message: "Failed to delete topping",
+    });
+  });
+
+  it("should not delete a topping if user is not authorized", async () => {
+    const mockReq = {
+      json: jest.fn().mockResolvedValue({ id: "1" }),
+    } as any;
+
+    (authorizeRole as jest.Mock).mockResolvedValue(false); // Mock unauthorized user
+
+    const response = await DELETE(mockReq);
+    const responseJson = await response.json(); // Convert NextResponse to JSON
+
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
+    expect(prismaMock.topping.findUnique).not.toHaveBeenCalled();
+    expect(prismaMock.topping.delete).not.toHaveBeenCalled();
+    expect(responseJson).toEqual({
+      success: false,
+      message: "Unauthorized",
     });
   });
 });
