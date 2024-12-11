@@ -1,5 +1,5 @@
 import { POST } from "../api/pizzas/create/route";
-// import { PUT } from "../api/pizzas/update/route";
+import { PUT } from "../api/pizzas/update/route";
 import { DELETE } from "../api/pizzas/delete/route";
 import prisma from "../clients/prismaClient";
 import { getPizzas } from "../utils/helpers";
@@ -223,6 +223,144 @@ describe("POST /api/pizzas/create", () => {
   });
 });
 
+describe("PUT /api/pizzas/update", () => {
+  beforeEach(() => {
+    jest.clearAllMocks(); // Clear mocks before each test
+  });
+
+  it("should update a pizza successfully", async () => {
+    const mockReq = {
+      json: jest.fn().mockResolvedValue({
+        id: "1",
+        name: "Updated pizza",
+        toppings: [{ id: "101" }, { id: "102" }],
+      }),
+    } as Partial<NextRequest>;
+
+    (authorizeRole as jest.Mock).mockResolvedValue(true);
+    (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
+    (prismaMock.pizza.findUnique as jest.Mock).mockResolvedValue({
+      id: "1",
+      name: "Old pizza",
+    }); // Simulate an existing pizza
+    (prismaMock.pizza.update as jest.Mock).mockResolvedValue({
+      id: "1",
+      name: "Updated pizza",
+      toppings: [],
+    });
+
+    const response = await PUT(mockReq as NextRequest);
+    const responseJson = await response.json(); // Convert NextResponse to JSON
+
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
+    expect(prismaMock.pizza.findUnique).toHaveBeenCalledWith({
+      where: { id: "1" },
+    });
+    expect(prismaMock.pizza.update).toHaveBeenCalledWith({
+      where: { id: "1" },
+      data: {
+        name: "Updated pizza",
+        toppings: { connect: [{ id: "101" }, { id: "102" }] },
+      },
+    });
+    expect(responseJson).toEqual({
+      success: true,
+      message: "Pizza updated successfully!",
+    });
+  });
+
+  it("should return an error if the pizza does not exist", async () => {
+    const mockReq = {
+      json: jest.fn().mockResolvedValue({
+        id: "999",
+        name: "Nonexistent pizza",
+        toppings: [{ id: "101" }],
+      }),
+    } as Partial<NextRequest>;
+
+    (authorizeRole as jest.Mock).mockResolvedValue(true);
+    (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
+
+    (prismaMock.pizza.findUnique as jest.Mock).mockResolvedValue(null); // Simulate no existing pizza
+
+    const response = await PUT(mockReq as NextRequest);
+    const responseJson = await response.json(); // Convert NextResponse to JSON
+
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
+    expect(prismaMock.pizza.findUnique).toHaveBeenCalledWith({
+      where: { id: "999" },
+    });
+    expect(prismaMock.pizza.update).not.toHaveBeenCalled();
+    expect(responseJson).toEqual({
+      success: false,
+      message: "Pizza not found",
+    });
+  });
+
+  it("should handle errors during the update operation", async () => {
+    const mockReq = {
+      json: jest.fn().mockResolvedValue({
+        id: "1",
+        name: "Faulty pizza",
+        toppings: [{ id: "101" }],
+      }),
+    } as Partial<NextRequest>;
+
+    (authorizeRole as jest.Mock).mockResolvedValue(true);
+    (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
+
+    (prismaMock.pizza.findUnique as jest.Mock).mockResolvedValue({
+      id: "1",
+      name: "Old pizza",
+    }); // Simulate an existing topping
+
+    (prismaMock.pizza.update as jest.Mock).mockImplementation(() => {
+      throw new Error("Failed to update pizza");
+    }); // Simulate an error during update
+
+    const response = await PUT(mockReq as NextRequest);
+    const responseJson = await response.json(); // Convert NextResponse to JSON
+
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
+    expect(prismaMock.pizza.findUnique).toHaveBeenCalledWith({
+      where: { id: "1" },
+    });
+    expect(prismaMock.pizza.update).toHaveBeenCalledWith({
+      where: { id: "1" },
+      data: {
+        name: "Faulty pizza",
+        toppings: { connect: [{ id: "101" }] },
+      },
+    });
+    expect(responseJson).toEqual({
+      success: false,
+      message: "Failed to update pizza",
+    });
+  });
+
+  it("should not update a pizza if user is not authorized", async () => {
+    const mockReq = {
+      json: jest.fn().mockResolvedValue({
+        id: "1",
+        name: "Updated pizza",
+        toppings: [{ id: "101" }, { id: "102" }],
+      }),
+    } as Partial<NextRequest>;
+
+    (authorizeRole as jest.Mock).mockResolvedValue(false);
+
+    const response = await PUT(mockReq as NextRequest);
+    const responseJson = await response.json(); // Convert NextResponse to JSON
+
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
+    expect(prismaMock.pizza.findUnique).not.toHaveBeenCalled();
+    expect(prismaMock.pizza.update).not.toHaveBeenCalled();
+    expect(responseJson).toEqual({
+      success: false,
+    });
+  });
+});
+
 describe("DELETE /api/pizzas/delete", () => {
   beforeEach(() => {
     jest.clearAllMocks(); // Clear mocks before each test
@@ -239,7 +377,7 @@ describe("DELETE /api/pizzas/delete", () => {
     (prismaMock.pizza.findUnique as jest.Mock).mockResolvedValue({
       id: "1",
       name: "Test pizza",
-    }); // Simulate an existing topping
+    }); // Simulate an existing pizza
     (prismaMock.pizza.delete as jest.Mock).mockResolvedValue({
       id: "1",
       name: "Test pizza",
@@ -269,7 +407,7 @@ describe("DELETE /api/pizzas/delete", () => {
     (authorizeRole as jest.Mock).mockResolvedValue(true);
     (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
     // Mock authorization
-    (prismaMock.pizza.findUnique as jest.Mock).mockResolvedValue(null); // Simulate no existing topping
+    (prismaMock.pizza.findUnique as jest.Mock).mockResolvedValue(null); // Simulate no existing pizza
 
     const response = await DELETE(mockReq as NextRequest);
     const responseJson = await response.json(); // Convert NextResponse to JSON
@@ -296,7 +434,7 @@ describe("DELETE /api/pizzas/delete", () => {
     (prismaMock.pizza.findUnique as jest.Mock).mockResolvedValue({
       id: "1",
       name: "Faulty pizza",
-    }); // Simulate an existing topping
+    }); // Simulate an existing pizza
 
     (prismaMock.pizza.delete as jest.Mock).mockImplementation(() => {
       throw new Error("Failed to fetch pizzas");
