@@ -15,9 +15,15 @@ export default function Pizzas({ pizzas }: { pizzas: Pizza[] }) {
     <section id="pizzas" className="bg-white py-12 sm:py-20">
       <div className="container mx-auto px-4 flex flex-col items-start justify-start">
         <div className="flex flex-col sm:flex-row justify-between w-full">
-          <h2 className="text-3xl font-bold mb-4">
-            Our world famous pizzas are made fresh to order
-          </h2>
+          <div>
+            <h2 className="text-3xl font-bold mb-2">
+              Our world famous pizzas are made fresh to order
+            </h2>
+            <h3 className="text-lg text-gray-500 mb-4">
+              As an owner at Pizzanomics you can add your own pizzas to our
+              database of pizzas.
+            </h3>
+          </div>
           <Button variant={"outline"} className="font-semibold">
             Add Pizza +
           </Button>
