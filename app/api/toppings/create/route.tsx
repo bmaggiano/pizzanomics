@@ -4,8 +4,14 @@ import { authorizeRole } from "../../../utils/roleCheck";
 
 export async function POST(req: NextRequest) {
   const roleResponse = await authorizeRole(req, "chef");
-  if (roleResponse.status !== 200) {
-    return roleResponse; // If the user is not authorized, return the response from middleware
+  if (!roleResponse || roleResponse.status !== 200) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Please log in or sign up to access this resource",
+      },
+      { status: 401 }
+    );
   }
 
   try {
@@ -31,7 +37,7 @@ export async function POST(req: NextRequest) {
         name: pizza.name,
       })) || [];
 
-    await prisma.topping.create({
+    const newTopping = await prisma.topping.create({
       data: {
         name: body?.name || "",
         pizzas: {
@@ -43,9 +49,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: true,
       message: "Topping added successfully!",
+      topping: newTopping,
     });
   } catch (error) {
-    console.error("Error adding topping:", error);
     return NextResponse.json(
       { success: false, message: "Failed to add topping" },
       { status: 500 }

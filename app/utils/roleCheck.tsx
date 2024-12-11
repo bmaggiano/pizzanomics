@@ -5,8 +5,8 @@ import { verifyToken } from "./auth";
 // Middleware for role-based access control
 export async function authorizeRole(req: NextRequest, requiredRole: string) {
   const token = req.cookies.get("auth_token")?.value;
-  console.log(token);
 
+  console.log(token);
   if (!token) {
     return NextResponse.json(
       { message: "Please log in or sign up to access this resource" },
@@ -15,14 +15,12 @@ export async function authorizeRole(req: NextRequest, requiredRole: string) {
   }
 
   const decoded = verifyToken(token);
-  console.log(decoded);
 
   const userId =
     typeof decoded === "object" && decoded !== null
       ? decoded.userId
       : undefined;
 
-  console.log(userId);
   if (!userId) {
     return NextResponse.json(
       { message: "User not authenticated" },
