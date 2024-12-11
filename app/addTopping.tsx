@@ -56,6 +56,7 @@ export default function AddTopping({ pizzas }: { pizzas: Pizza[] }) {
           title: "Topping added successfully!",
         });
         router.refresh();
+        setMessage("");
         setOpen(false);
       } else {
         const error = await result.json();
