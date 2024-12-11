@@ -5,12 +5,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Pizza } from "./types/types";
+import { Pizza, Topping } from "./types/types";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import AddPizza from "./addPizza";
 
-export default function Pizzas({ pizzas }: { pizzas: Pizza[] }) {
+export default function Pizzas({
+  pizzas,
+  toppings,
+}: {
+  pizzas: Pizza[];
+  toppings: Topping[];
+}) {
   return (
     <section id="pizzas" className="bg-white py-12 sm:py-20">
       <div className="container mx-auto px-4 flex flex-col items-start justify-start">
@@ -24,9 +30,7 @@ export default function Pizzas({ pizzas }: { pizzas: Pizza[] }) {
               database of pizzas.
             </h3>
           </div>
-          <Button variant={"outline"} className="font-semibold">
-            Add Pizza +
-          </Button>
+          <AddPizza toppings={toppings} />
         </div>
         <ScrollArea className="w-full">
           <div className="flex justify-start gap-6 py-4">
@@ -35,7 +39,8 @@ export default function Pizzas({ pizzas }: { pizzas: Pizza[] }) {
                 <CardHeader className="m-0 p-0">
                   <Image
                     src={
-                      pizza?.imageUrl || "/pizza.png" // Default image if no imageUrl is available
+                      pizza?.imageUrl ||
+                      "https://images.unsplash.com/photo-1517686469429-8bdb88b9f907?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" // Default image if no imageUrl is available
                     }
                     alt={pizza.name}
                     width={220}
