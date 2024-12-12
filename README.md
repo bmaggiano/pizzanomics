@@ -1,6 +1,6 @@
 # PizzaNomics
 
-<img width="1452" alt="Screenshot 2024-12-11 at 8 21 21 PM" src="https://github.com/user-attachments/assets/91b6249c-ce6a-4c29-a720-31959d6302a7" />
+<img width="1425" alt="Screenshot 2024-12-12 at 12 42 28 PM" src="https://github.com/user-attachments/assets/9f27b6c9-a694-4dd7-a4f1-cba8c9454094" />
 
 ## Table of Contents
 - [Link to deployed application](#link-to-deployed-application)
@@ -8,6 +8,7 @@
 - [Technologies](#technologies)
 - [Testing](#testing)
 - [Future development](#future-development)
+- [More screenshots](#more-screenshots)
 
 ## Link to deployed application
 
@@ -41,7 +42,7 @@ Pizzanomics is a full stack web application that allows owners and chefs of a fi
 
 ## Testing
 
-The projects main operations are the ability for an owner to CREATE, READ, UPDATE, and DELETE pizzas as well as the ability for a chef to CREATE, READ, UPDATE, and DELETE ingredients. The main testing framework used is JEST and each one of these CRUD operations as well as user Authentication are tested individually.
+The projects main operations are the ability for a chef to CREATE, READ, UPDATE, and DELETE pizzas as well as the ability for an owner to CREATE, READ, UPDATE, and DELETE ingredients. The main testing framework used is JEST and each one of these CRUD operations as well as user Authentication are tested individually.
 
 This project is also protected by Github's rulesets and those rules can be found in the tests.yml file. These tests must pass for a PR to go through.
 
@@ -62,3 +63,11 @@ The sky is truly the limit for this project and there were many features that I 
 2. A chef/owner settings page which allows for the owner or chef to update their profile information, password and delete their account.
 3. Sorting and filtering if the database became too crowded with pizzas and toppings. I chose to use horizontal for the time being as I predict there won't be too many pizzas or toppings added.
 4. Google authentication for ease of sign ups and log in.
+
+## More Screenshots
+
+<img width="1423" alt="Screenshot 2024-12-12 at 12 43 24 PM" src="https://github.com/user-attachments/assets/8770aaa9-fd72-4f62-9b97-a7afd8a74e5a" />
+<img width="1376" alt="Screenshot 2024-12-12 at 12 44 02 PM" src="https://github.com/user-attachments/assets/68cee12e-6796-4eaa-82e5-329341628bd6" />
+<img width="1422" alt="Screenshot 2024-12-12 at 12 44 44 PM" src="https://github.com/user-attachments/assets/fc168568-3901-4ebf-9720-cedcd89b37ba" />
+
+
