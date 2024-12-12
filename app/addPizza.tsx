@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useState } from "react";
 import { Topping } from "./types/types";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -12,7 +13,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
@@ -23,21 +23,21 @@ export default function AddPizza({ toppings }: { toppings: Topping[] }) {
   const [pizzaName, setPizzaName] = useState("");
   const [pizzaImage, setPizzaImage] = useState("");
   const [onTopping, setOnTopping] = useState<{ name: string }[]>([]);
-  const { toast } = useToast();
-  const router = useRouter();
   const [descriptionCount, setDescriptionCount] = useState(0);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+  const router = useRouter();
 
   const handleAddToppings = (checked: boolean, topping: Topping) => {
     if (checked) {
-      // Add pizza to the state when the checkbox is checked
+      // Add topping to the state when the checkbox is checked
       setOnTopping((prevState) => [
         ...prevState,
         { id: topping.id, name: topping.name },
       ]);
     } else {
-      // Remove pizza from the state when the checkbox is unchecked
+      // Remove topping from the state when the checkbox is unchecked
       setOnTopping((prevState) =>
         prevState.filter((p) => p.name !== topping.name)
       );

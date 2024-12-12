@@ -1,3 +1,5 @@
+// TS specific types to esnure safety of data
+
 export interface Topping {
   id: number;
   name: string;

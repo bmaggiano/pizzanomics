@@ -34,7 +34,6 @@ export default function MobileNavigation() {
         <div className="flex flex-col gap-4 p-6">
           <IsAuthenticated />
           <Separator />
-
           <NavigationMenu>
             <ul className="gap-4 ">
               {navItems.map((item) => (
@@ -56,7 +55,6 @@ export default function MobileNavigation() {
               ))}
             </ul>
           </NavigationMenu>
-
           <Separator />
         </div>
       </SheetContent>

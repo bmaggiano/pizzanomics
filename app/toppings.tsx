@@ -227,7 +227,6 @@ export default function Toppings({
         </div>
         <ScrollArea className="w-full">
           <div className="flex justify-start w-full items-center py-4 gap-4">
-            {/* <div className="grid sm:grid-cols-6 grid-cols-2 gap-4 pt-4"> */}
             {toppings.map((topping) => (
               <Card
                 key={topping.id}
@@ -255,7 +254,6 @@ export default function Toppings({
                 </CardHeader>
               </Card>
             ))}
-            {/* </div> */}
           </div>
           <ScrollBar orientation="horizontal" />
         </ScrollArea>

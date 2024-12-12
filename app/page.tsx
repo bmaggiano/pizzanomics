@@ -12,15 +12,6 @@ export default async function Home() {
   const pizzas = await getPizzas();
   const cookieStore = await cookies();
   const token = cookieStore.get("auth_token")?.value;
-  // if (!token) {
-  //   return (
-  //     <>
-  //       <Hero />
-  //       <Pizzas pizzas={pizzas} toppings={toppings} />
-  //       <Toppings toppings={toppings} pizzas={pizzas} />
-  //     </>
-  //   );
-  // }
   const user = token ? await verifyToken(token) : null;
   return (
     <>

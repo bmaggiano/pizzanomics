@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { Pizza } from "./types/types";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -12,7 +13,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
@@ -21,10 +21,10 @@ export default function AddTopping({ pizzas }: { pizzas: Pizza[] }) {
   const [message, setMessage] = useState("");
   const [toppingName, setToppingName] = useState("");
   const [onPizza, setOnPizza] = useState<{ name: string }[]>([]);
-  const { toast } = useToast();
-  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+  const router = useRouter();
 
   const handleAddPizzas = (checked: boolean, pizza: Pizza) => {
     if (checked) {

@@ -1,7 +1,7 @@
 "use client";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-import { useState, useEffect } from "react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Card,
@@ -120,13 +120,13 @@ function EditPizza({ topping, pizzas }: { topping: Topping[]; pizzas: Pizza }) {
 
   const handleAddToppings = (checked: boolean, topping: Topping) => {
     if (checked) {
-      // Add pizza to the state when the checkbox is checked
+      // Add topping to the state when the checkbox is checked
       setOnTopping((prevState) => [
         ...prevState,
         { id: topping.id, name: topping.name },
       ]);
     } else {
-      // Remove pizza from the state when the checkbox is unchecked
+      // Remove topping from the state when the checkbox is unchecked
       setOnTopping((prevState) =>
         prevState.filter((p) => p.name !== topping.name)
       );
