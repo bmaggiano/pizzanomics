@@ -251,7 +251,7 @@ export default function Pizzas({
       <div className="container mx-auto px-4 flex flex-col items-start justify-start">
         <div className="flex flex-col sm:flex-row justify-between w-full">
           <div>
-            <h2 className="text-3xl font-bold mb-2">
+            <h2 className="text-3xl tracking-tight font-bold mb-2">
               Our world famous pizzas are made fresh to order
             </h2>
             <h3 className="text-lg text-gray-500 mb-4">

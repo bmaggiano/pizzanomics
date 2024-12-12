@@ -209,7 +209,7 @@ export default function Toppings({
       <div className="container mx-auto px-4 flex flex-col items-start justify-between items-center">
         <div className="flex flex-col sm:flex-row justify-between w-full">
           <div>
-            <h2 className="text-3xl font-bold mb-2">
+            <h2 className="text-3xl tracking-tight font-bold mb-2">
               Our pizzas are made with the highest quality ingredients
             </h2>
             <h3 className="text-lg text-gray-500 mb-4">
