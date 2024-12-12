@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PizzaNomics
 
-## Getting Started
+## Link to deployed application
 
-First, run the development server:
+https://pizzanomics.vercel.app
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Description
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Pizzanomics is a web application that allows owners and chefs of a fictional pizzeria to track their inventory of pizzas as well as their ingredients. This project is a standard CRUD application that draws inspiration from other popular pizza order applications such as Pizza Hut, Papa John's, and Grimaldi's.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Technologies
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Next.js: This was chosen as the framework for the project based on the personal familiarity of the framework as well as the fact that Next.js supports server-side rendering which increases the performance of the application for simple data fetching.
 
-## Learn More
+- Tailwind CSS: The design framework used for this project. Allows for easy customization of the design of certain pages and components.
 
-To learn more about Next.js, take a look at the following resources:
+- Supabase: Initially, the project was going to be built with sqlite as a super lightweight database and would be stored server-side. However, after some research, it was decided to switch to supabase as sqlite presented some issues when deploying to popular hosting providers such as Vercel and Heroku. Supabase is a great, reliable, free hosting option that pairs well with Next.js, Prisma and PostgreSQL.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Prisma: Prisma is a database ORM that allows for easy data fetching and manipulation. Regardless of the database used for the project, Prisma provides a consistent API for interacting with the database.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- PostgreSQL: PostgreSQL is a powerful, open-source relational database management system. It is known for its reliability, scalability, and performance.
 
-## Deploy on Vercel
+- ShadCN component library: A personal favorite for fast building and ease of component use. Its modern feel and constant additions of features make it my go-to for building applications.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- JEST: A testing framework that is used for unit testing and integration testing.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Vercel Hosting: The project was deployed to Vercel for easy hosting and deployment. Vercel is a 'serveless' hosting provider (essentially an AWS wrapper) that allows for easy deployment and hosting of Next.js applications. While it is 'serverless' that doesn't mean there is no server, it just means that teh developer doesn't have to worry about managing the server.
+
+- Vercel OG: Allows for ease of creating URL cards for the project which can be shared on social media which add another element of branding to the project.
+
+## Testing and forking details
+
+The projects main operations are the ability for an owner to CREATE, READ, UPDATE, and DELETE pizzas as well as the ability for a chef to CREATE, READ, UPDATE, and DELETE ingredients. The main testing framework used is JEST and each one of these CRUD operations as well as user Authentication are tested individually. Fork this project and add your own features and functionality.
+
+1. Fork this project
+2. Clone the forked project to your local machine
+3. Run `npm install` to install all the dependencies
+4. Create a `.env` file in the root directory of the project and add the variables from template.env
+5. Run 'npm run test' to run the tests
+6. Run 'npm run dev' to start the application
+
+## Future Development
+
+The sky is truly the limit for this project and there were many features that I wanted to add to the project including:
+
+1. A chef/owner dashboard which allows for chefs and owners to view their inventory in a more database related manner.
+2. A chef/owner settings page which allows for the owner or chef to update their profile information, password and delete their account.
