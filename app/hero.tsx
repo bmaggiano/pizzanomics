@@ -5,7 +5,7 @@ export default function Hero() {
   return (
     <section
       className="relative bg-cover bg-center py-12 sm:py-32"
-      style={{ backgroundImage: "url('/heroPizza.jpg')" }}
+      style={{ backgroundImage: "url('/pizzalogo2.avif')" }}
     >
       <div className="absolute inset-0 bg-black opacity-75"></div>
       <div className="container mx-auto px-4 relative z-10">
