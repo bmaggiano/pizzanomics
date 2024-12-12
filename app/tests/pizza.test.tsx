@@ -233,6 +233,8 @@ describe("PUT /api/pizzas/update", () => {
       json: jest.fn().mockResolvedValue({
         id: "1",
         name: "Updated pizza",
+        description: "Updated description",
+        imageUrl: "Updated imageUrl",
         toppings: [{ id: "101" }, { id: "102" }],
       }),
     } as Partial<NextRequest>;
@@ -246,6 +248,8 @@ describe("PUT /api/pizzas/update", () => {
     (prismaMock.pizza.update as jest.Mock).mockResolvedValue({
       id: "1",
       name: "Updated pizza",
+      description: "Updated description",
+      imageUrl: "Updated imageUrl",
       toppings: [],
     });
 
@@ -260,6 +264,8 @@ describe("PUT /api/pizzas/update", () => {
       where: { id: "1" },
       data: {
         name: "Updated pizza",
+        description: "Updated description",
+        imageUrl: "Updated imageUrl",
         toppings: { connect: [{ id: "101" }, { id: "102" }] },
       },
     });
@@ -274,6 +280,8 @@ describe("PUT /api/pizzas/update", () => {
       json: jest.fn().mockResolvedValue({
         id: "999",
         name: "Nonexistent pizza",
+        description: "Nonexistent description",
+        imageUrl: "Nonexistent imageUrl",
         toppings: [{ id: "101" }],
       }),
     } as Partial<NextRequest>;
@@ -302,6 +310,8 @@ describe("PUT /api/pizzas/update", () => {
       json: jest.fn().mockResolvedValue({
         id: "1",
         name: "Faulty pizza",
+        description: "Faulty description",
+        imageUrl: "Faulty imageUrl",
         toppings: [{ id: "101" }],
       }),
     } as Partial<NextRequest>;
@@ -312,6 +322,8 @@ describe("PUT /api/pizzas/update", () => {
     (prismaMock.pizza.findUnique as jest.Mock).mockResolvedValue({
       id: "1",
       name: "Old pizza",
+      description: "Old description",
+      imageUrl: "Old imageUrl",
     }); // Simulate an existing topping
 
     (prismaMock.pizza.update as jest.Mock).mockImplementation(() => {
@@ -329,6 +341,8 @@ describe("PUT /api/pizzas/update", () => {
       where: { id: "1" },
       data: {
         name: "Faulty pizza",
+        description: "Faulty description",
+        imageUrl: "Faulty imageUrl",
         toppings: { connect: [{ id: "101" }] },
       },
     });
