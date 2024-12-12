@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import pizzaFetches from "./fetches/pizzaFetches";
 
 export default function AddPizza({ toppings }: { toppings: Topping[] }) {
   const [message, setMessage] = useState("");
@@ -49,35 +50,17 @@ export default function AddPizza({ toppings }: { toppings: Topping[] }) {
   }, [pizzaDescription]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const result = await fetch("/api/pizzas/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: pizzaName,
-          description: pizzaDescription,
-          toppings: onTopping,
-        }),
-      });
-      if (result.ok) {
-        toast({
-          title: "Pizza added successfully!",
-        });
-        router.refresh();
-        setMessage("");
-        setOpen(false);
-      } else {
-        const error = await result.json();
-        setMessage(error.message);
-      }
-    } catch (error) {
-      console.error("Error adding topping:", error);
-    }
-    setLoading(false);
+    await pizzaFetches.createPizza(
+      e,
+      setLoading,
+      toast,
+      router,
+      setMessage,
+      setOpen,
+      pizzaName,
+      pizzaDescription,
+      onTopping
+    );
   };
   return (
     <Dialog open={open} onOpenChange={setOpen}>

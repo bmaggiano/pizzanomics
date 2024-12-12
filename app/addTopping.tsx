@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import toppingFetches from "./fetches/toppingFetches";
 
 export default function AddTopping({ pizzas }: { pizzas: Pizza[] }) {
   const [message, setMessage] = useState("");
@@ -40,34 +41,16 @@ export default function AddTopping({ pizzas }: { pizzas: Pizza[] }) {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const result = await fetch("/api/toppings/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: toppingName,
-          pizzas: onPizza,
-        }),
-      });
-      if (result.ok) {
-        toast({
-          title: "Topping added successfully!",
-        });
-        router.refresh();
-        setMessage("");
-        setOpen(false);
-      } else {
-        const error = await result.json();
-        setMessage(error.message);
-      }
-    } catch (error) {
-      console.error("Error adding topping:", error);
-    }
-    setLoading(false);
+    await toppingFetches.createTopping(
+      e,
+      setLoading,
+      toast,
+      router,
+      setMessage,
+      setOpen,
+      toppingName,
+      onPizza
+    );
   };
   return (
     <Dialog open={open} onOpenChange={setOpen}>
