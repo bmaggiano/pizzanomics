@@ -30,9 +30,13 @@ Pizzanomics is a web application that allows owners and chefs of a fictional piz
 
 - Vercel OG: Allows for ease of creating URL cards for the project which can be shared on social media which add another element of branding to the project.
 
+- JSON web tokens: Allow for authentication and the JWTs are signed and coded as well as exist in HTTP only cookies for protection and authentication.
+
 ## Testing and forking details
 
 The projects main operations are the ability for an owner to CREATE, READ, UPDATE, and DELETE pizzas as well as the ability for a chef to CREATE, READ, UPDATE, and DELETE ingredients. The main testing framework used is JEST and each one of these CRUD operations as well as user Authentication are tested individually. Fork this project and add your own features and functionality.
+
+- Node V 16 or greater required.
 
 1. Fork this project
 2. Clone the forked project to your local machine
@@ -47,3 +51,4 @@ The sky is truly the limit for this project and there were many features that I 
 
 1. A chef/owner dashboard which allows for chefs and owners to view their inventory in a more database related manner.
 2. A chef/owner settings page which allows for the owner or chef to update their profile information, password and delete their account.
+3. Google authentication for ease of sign ups and log in.
