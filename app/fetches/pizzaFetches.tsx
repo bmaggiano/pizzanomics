@@ -1,14 +1,17 @@
-export default {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Pizza, Topping } from "../types/types";
+
+const pizzaFetches = {
   createPizza: async (
     e: React.FormEvent,
     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
-    toast: any,
+    toast: (toastMessage: { title: string }) => void,
     router: any,
     setMessage: React.Dispatch<React.SetStateAction<string>>,
     setOpen: React.Dispatch<React.SetStateAction<boolean>>,
     pizzaName: string,
     pizzaDescription: string,
-    onTopping: any
+    onTopping: Topping[]
   ) => {
     e.preventDefault();
     setLoading(true);
@@ -43,15 +46,15 @@ export default {
   updatePizza: async (
     e: React.FormEvent,
     setEditLoading: React.Dispatch<React.SetStateAction<boolean>>,
-    toast: any,
+    toast: (toastMessage: { title: string }) => void,
     router: any,
     setMessage: React.Dispatch<React.SetStateAction<string>>,
     setOpen: React.Dispatch<React.SetStateAction<boolean>>,
-    pizzas: any,
+    pizza: Pizza,
     pizzaName: string,
     pizzaImage: string,
     pizzaDescription: string,
-    onTopping: any
+    onTopping: Topping[]
   ) => {
     e.preventDefault();
     setEditLoading(true);
@@ -62,7 +65,7 @@ export default {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          id: pizzas.id,
+          id: pizza.id,
           name: pizzaName,
           description: pizzaDescription,
           imageUrl: pizzaImage,
@@ -88,11 +91,11 @@ export default {
   deletePizza: async (
     e: React.FormEvent,
     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
-    toast: any,
+    toast: (toastMessage: { title: string }) => void,
     router: any,
     setMessage: React.Dispatch<React.SetStateAction<string>>,
     setOpen: React.Dispatch<React.SetStateAction<boolean>>,
-    pizzas: any
+    pizza: Pizza
   ) => {
     e.preventDefault();
     setLoading(true);
@@ -102,7 +105,7 @@ export default {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ id: pizzas.id }),
+        body: JSON.stringify({ id: pizza.id }),
       });
 
       if (result.ok) {
@@ -122,3 +125,5 @@ export default {
     setLoading(false);
   },
 };
+
+export default pizzaFetches;

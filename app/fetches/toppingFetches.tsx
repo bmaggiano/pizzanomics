@@ -1,13 +1,16 @@
-export default {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Pizza, Topping } from "../types/types";
+
+const toppingFetches = {
   createTopping: async (
     e: React.FormEvent,
     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
-    toast: any,
+    toast: (toastMessage: { title: string }) => void,
     router: any,
     setMessage: React.Dispatch<React.SetStateAction<string>>,
     setOpen: React.Dispatch<React.SetStateAction<boolean>>,
     toppingName: string,
-    onPizza: any
+    onPizza: Pizza[]
   ) => {
     e.preventDefault();
     setLoading(true);
@@ -41,13 +44,13 @@ export default {
   updateTopping: async (
     e: React.FormEvent,
     setEditLoading: React.Dispatch<React.SetStateAction<boolean>>,
-    toast: any,
+    toast: (toastMessage: { title: string }) => void,
     router: any,
     setMessage: React.Dispatch<React.SetStateAction<string>>,
     setOpen: React.Dispatch<React.SetStateAction<boolean>>,
-    topping: any,
+    topping: Topping,
     toppingName: string,
-    onPizza: any
+    onPizza: Pizza[]
   ) => {
     e.preventDefault();
     setEditLoading(true);
@@ -82,11 +85,11 @@ export default {
   deleteTopping: async (
     e: React.FormEvent,
     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
-    toast: any,
+    toast: (toastMessage: { title: string }) => void,
     router: any,
     setMessage: React.Dispatch<React.SetStateAction<string>>,
     setOpen: React.Dispatch<React.SetStateAction<boolean>>,
-    topping: any
+    topping: Topping
   ) => {
     e.preventDefault();
     setLoading(true);
@@ -116,3 +119,5 @@ export default {
     setLoading(false);
   },
 };
+
+export default toppingFetches;

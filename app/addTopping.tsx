@@ -49,7 +49,7 @@ export default function AddTopping({ pizzas }: { pizzas: Pizza[] }) {
       setMessage,
       setOpen,
       toppingName,
-      onPizza
+      onPizza as Pizza[]
     );
   };
   return (

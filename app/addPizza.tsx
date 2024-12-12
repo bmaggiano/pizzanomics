@@ -59,7 +59,7 @@ export default function AddPizza({ toppings }: { toppings: Topping[] }) {
       setOpen,
       pizzaName,
       pizzaDescription,
-      onTopping
+      onTopping as Topping[]
     );
   };
   return (
