@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
       where: { name: body?.name || "" },
     });
 
-    if (existingTopping?.name === body?.name) {
+    if (existingTopping?.name.toLowerCase() === body?.name?.toLowerCase()) {
       return NextResponse.json(
         {
           success: false,
