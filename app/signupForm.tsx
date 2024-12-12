@@ -49,14 +49,14 @@ export default function SignUpForm() {
       formData.password,
       formData.role
     );
-    setIsLoading(false);
 
     if (result.success) {
       setMessage("Sign up successful!");
-      router.push("/"); // Redirect to dashboard or welcome page
+      router.push("/");
     } else {
       setMessage(result.message || "Sign up failed");
     }
+    setIsLoading(false);
   };
 
   return (

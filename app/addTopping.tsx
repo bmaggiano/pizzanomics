@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { Pizza } from "./types/types";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -12,17 +13,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
+import { Loader2 } from "lucide-react";
 
 export default function AddTopping({ pizzas }: { pizzas: Pizza[] }) {
   const [message, setMessage] = useState("");
   const [toppingName, setToppingName] = useState("");
   const [onPizza, setOnPizza] = useState<{ name: string }[]>([]);
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
-  const [open, setOpen] = useState(false);
 
   const handleAddPizzas = (checked: boolean, pizza: Pizza) => {
     if (checked) {
@@ -39,6 +41,7 @@ export default function AddTopping({ pizzas }: { pizzas: Pizza[] }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const result = await fetch("/api/toppings/create", {
         method: "POST",
@@ -50,7 +53,6 @@ export default function AddTopping({ pizzas }: { pizzas: Pizza[] }) {
           pizzas: onPizza,
         }),
       });
-      console.log(result);
       if (result.ok) {
         toast({
           title: "Topping added successfully!",
@@ -65,6 +67,7 @@ export default function AddTopping({ pizzas }: { pizzas: Pizza[] }) {
     } catch (error) {
       console.error("Error adding topping:", error);
     }
+    setLoading(false);
   };
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -108,9 +111,15 @@ export default function AddTopping({ pizzas }: { pizzas: Pizza[] }) {
               </label>
             </div>
           ))}
-          <Button className="flex w-full" type="submit">
-            Add Topping
-          </Button>
+          {loading ? (
+            <Button disabled className="flex w-full">
+              <Loader2 className="animate-spin" /> Adding Topping
+            </Button>
+          ) : (
+            <Button className="flex w-full" type="submit">
+              Add Topping
+            </Button>
+          )}
           {message && (
             <p
               className={cn(

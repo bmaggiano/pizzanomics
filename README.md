@@ -36,6 +36,8 @@ Pizzanomics is a web application that allows owners and chefs of a fictional piz
 
 The projects main operations are the ability for an owner to CREATE, READ, UPDATE, and DELETE pizzas as well as the ability for a chef to CREATE, READ, UPDATE, and DELETE ingredients. The main testing framework used is JEST and each one of these CRUD operations as well as user Authentication are tested individually. Fork this project and add your own features and functionality.
 
+This project is also protected by Github's rulesets and those rules can be found in the tests.yml file.
+
 - Node V 16 or greater required.
 
 1. Fork this project

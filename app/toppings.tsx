@@ -1,10 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Topping, Pizza } from "./types/types";
+import { Topping, Pizza, User } from "./types/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
 import AddTopping from "./addTopping";
-import { Edit } from "lucide-react";
+import { Edit, Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -35,6 +35,8 @@ function EditTopping({
   const [onPizza, setOnPizza] = useState<{ id: number; name: string }[]>([]);
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+  const [editLoading, setEditLoading] = useState(false);
 
   useEffect(() => {
     if (open && topping?.pizzas) {
@@ -44,7 +46,7 @@ function EditTopping({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("clicked");
+    setEditLoading(true);
     try {
       const result = await fetch("/api/toppings/update", {
         method: "PUT",
@@ -71,11 +73,12 @@ function EditTopping({
     } catch (error) {
       console.error("Error adding topping:", error);
     }
+    setEditLoading(false);
   };
 
   const handleDelete = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("handleDelete");
+    setLoading(true);
     try {
       const result = await fetch("/api/toppings/delete", {
         method: "DELETE",
@@ -99,6 +102,7 @@ function EditTopping({
     } catch (error) {
       console.error("Error deleting topping:", error);
     }
+    setLoading(false);
   };
 
   const handleAddPizzas = (checked: boolean, pizza: Pizza) => {
@@ -158,10 +162,22 @@ function EditTopping({
             </div>
           ))}
           <div className="flex justify-end gap-4 w-full">
-            <Button type="submit">Save</Button>
-            <Button variant={"destructive"} onClick={(e) => handleDelete(e)}>
-              Delete
-            </Button>
+            {editLoading ? (
+              <Button disabled>
+                <Loader2 className="animate-spin" /> Saving Topping
+              </Button>
+            ) : (
+              <Button type="submit">Save</Button>
+            )}
+            {loading ? (
+              <Button disabled variant={"destructive"}>
+                <Loader2 className="animate-spin" /> Deleting Topping
+              </Button>
+            ) : (
+              <Button variant={"destructive"} onClick={(e) => handleDelete(e)}>
+                Delete
+              </Button>
+            )}
           </div>
         </form>
         {message && (
@@ -180,9 +196,11 @@ function EditTopping({
 }
 
 export default function Toppings({
+  user,
   toppings,
   pizzas,
 }: {
+  user: User | null;
   toppings: Topping[];
   pizzas: Pizza[];
 }) {
@@ -191,7 +209,7 @@ export default function Toppings({
       <div className="container mx-auto px-4 flex flex-col items-start justify-between items-center">
         <div className="flex flex-col sm:flex-row justify-between w-full">
           <div>
-            <h2 className="text-3xl font-bold mb-2">
+            <h2 className="text-3xl tracking-tight font-bold mb-2">
               Our pizzas are made with the highest quality ingredients
             </h2>
             <h3 className="text-lg text-gray-500 mb-4">
@@ -199,17 +217,24 @@ export default function Toppings({
               database of toppings.
             </h3>
           </div>
-          <AddTopping pizzas={pizzas} />
+          {user && user.role === "chef" ? (
+            <AddTopping pizzas={pizzas} />
+          ) : (
+            <Button disabled variant={"outline"}>
+              Add Topping +
+            </Button>
+          )}
         </div>
         <ScrollArea className="w-full">
           <div className="flex justify-start w-full items-center py-4 gap-4">
-            {/* <div className="grid sm:grid-cols-6 grid-cols-2 gap-4 pt-4"> */}
             {toppings.map((topping) => (
               <Card
                 key={topping.id}
                 className="w-[150px] relative flex flex-col items-center"
               >
-                <EditTopping pizzas={pizzas} topping={topping} />
+                {user && user.role === "chef" && (
+                  <EditTopping pizzas={pizzas} topping={topping} />
+                )}
                 <CardHeader className="p-4">
                   <p className="font-semibold">{topping.name}</p>
                   {topping?.pizzas && topping?.pizzas?.length > 0 ? (
@@ -229,7 +254,6 @@ export default function Toppings({
                 </CardHeader>
               </Card>
             ))}
-            {/* </div> */}
           </div>
           <ScrollBar orientation="horizontal" />
         </ScrollArea>

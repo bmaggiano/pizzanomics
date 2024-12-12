@@ -31,7 +31,6 @@ export async function GET(req: NextRequest) {
             marginBottom: "20px",
           }}
         >
-          {/* Pizza emoji as an icon */}
           <div
             style={{ display: "flex", fontSize: "80px", marginRight: "20px" }}
           >
@@ -44,7 +43,7 @@ export async function GET(req: NextRequest) {
           <div tw="flex flex-col">
             <h1
               style={{
-                fontSize: "80px",
+                fontSize: "120px",
                 fontWeight: "bold",
                 color: "black",
                 margin: "0",
@@ -52,18 +51,19 @@ export async function GET(req: NextRequest) {
             >
               {title}
             </h1>
-            <p
-              style={{
-                fontSize: "30px",
-                textAlign: "center",
-                maxWidth: "800px",
-                color: "gray",
-              }}
-            >
-              {description}
-            </p>
           </div>
         </div>
+        <p
+          style={{
+            fontSize: "60px",
+            textAlign: "center",
+            maxWidth: "800px",
+            color: "gray",
+          }}
+        >
+          {description}
+        </p>
+        <p>Powered by Vercel and Brandon Maggiano</p>
       </div>
     ),
     {

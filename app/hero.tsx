@@ -1,7 +1,8 @@
 "use client";
-import { Button } from "@/components/ui/button";
+import { User } from "./types/types";
+import LoginForm from "./loginForm";
 
-export default function Hero() {
+export default function Hero({ user }: { user?: User }) {
   return (
     <section
       className="relative bg-cover bg-center py-12 sm:py-32"
@@ -15,9 +16,11 @@ export default function Hero() {
             Explore our exquisite selection of handcrafted pizzas and premium
             toppings.
           </p>
-          <Button variant={"outline"} className="text-black font-semibold">
-            Get Started
-          </Button>
+          {!user ? (
+            <LoginForm title="Get Started" />
+          ) : (
+            <p className="text-lg">Welcome back!</p>
+          )}
         </div>
       </div>
     </section>

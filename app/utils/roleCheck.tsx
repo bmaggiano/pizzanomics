@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "../clients/prismaClient";
 import { verifyToken } from "./auth";
 
-// Middleware for role-based access control
+// Helper for role-based access control
 export async function authorizeRole(req: NextRequest, requiredRole: string) {
   const token = req.cookies.get("auth_token")?.value;
 
