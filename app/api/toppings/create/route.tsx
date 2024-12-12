@@ -3,7 +3,7 @@ import prisma from "../../../clients/prismaClient";
 import { authorizeRole } from "../../../utils/roleCheck";
 
 export async function POST(req: NextRequest) {
-  const roleResponse = await authorizeRole(req, "chef");
+  const roleResponse = await authorizeRole(req, "owner");
   if (!roleResponse || roleResponse.status !== 200) {
     return NextResponse.json(
       {
@@ -16,9 +16,15 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
+    const normalizedName = body?.name?.toLowerCase() || "";
 
-    const existingTopping = await prisma.topping.findUnique({
-      where: { name: body?.name || "" },
+    const existingTopping = await prisma.topping.findFirst({
+      where: {
+        name: {
+          equals: normalizedName, // Normalize for comparison
+          mode: "insensitive", // Case-insensitive matching
+        },
+      },
     });
 
     if (existingTopping?.name.toLowerCase() === body?.name?.toLowerCase()) {

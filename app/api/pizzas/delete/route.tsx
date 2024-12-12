@@ -3,7 +3,7 @@ import prisma from "../../../clients/prismaClient";
 import { authorizeRole } from "../../../utils/roleCheck";
 
 export async function DELETE(req: NextRequest) {
-  const roleResponse = await authorizeRole(req, "owner");
+  const roleResponse = await authorizeRole(req, "chef");
   if (!roleResponse || roleResponse.status !== 200) {
     return NextResponse.json(
       {

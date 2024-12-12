@@ -10,6 +10,7 @@ jest.mock("../clients/prismaClient", () => ({
   pizza: {
     findUnique: jest.fn(),
     findMany: jest.fn(),
+    findFirst: jest.fn(),
     create: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
@@ -105,10 +106,13 @@ describe("POST /api/pizzas/create", () => {
     expect(response).toBeInstanceOf(NextResponse);
     const responseJson = await response.json();
 
-    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
-    expect(prismaMock.pizza.findUnique).toHaveBeenCalledWith({
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
+    expect(prismaMock.pizza.findFirst).toHaveBeenCalledWith({
       where: {
-        name: "Test",
+        name: {
+          equals: "test",
+          mode: "insensitive",
+        },
       },
     });
     expect(prismaMock.pizza.create).toHaveBeenCalledWith({
@@ -139,27 +143,32 @@ describe("POST /api/pizzas/create", () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name: "Test",
+        name: "test",
         toppings: [{ name: "Test topping" }],
       }),
     });
 
     (authorizeRole as jest.Mock).mockResolvedValue(true);
     (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
-    (prismaMock.pizza.findUnique as jest.Mock).mockResolvedValue({
+    (prismaMock.pizza.findFirst as jest.Mock).mockResolvedValue({
       id: "1",
-      name: "Test",
+      name: "test",
     });
 
     const response = await POST(mockReq);
     expect(response).toBeInstanceOf(NextResponse);
     const responseJson = await response.json();
 
-    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
-    expect(prismaMock.pizza.findUnique).toHaveBeenCalledWith({
-      where: { name: "Test" },
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
+    expect(prismaMock.pizza.findFirst).toHaveBeenCalledWith({
+      where: {
+        name: {
+          equals: "test",
+          mode: "insensitive",
+        },
+      },
     });
-    expect(prismaMock.pizza.create).not.toHaveBeenCalled();
+    expect(prismaMock.pizza.create as jest.Mock).not.toHaveBeenCalled();
     expect(responseJson).toEqual({
       success: false,
       message: "Pizza already exists",
@@ -189,7 +198,7 @@ describe("POST /api/pizzas/create", () => {
     expect(response).toBeInstanceOf(NextResponse);
     const responseJson = await response.json();
 
-    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
     expect(responseJson).toEqual({
       success: false,
       message: "Failed to add pizza",
@@ -214,7 +223,7 @@ describe("POST /api/pizzas/create", () => {
     expect(response).toBeInstanceOf(NextResponse);
     const responseJson = await response.json();
 
-    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
     expect(prismaMock.pizza.findUnique).not.toHaveBeenCalled();
     expect(prismaMock.pizza.create).not.toHaveBeenCalled();
     expect(responseJson).toEqual({
@@ -239,12 +248,12 @@ describe("PUT /api/pizzas/update", () => {
       }),
     } as Partial<NextRequest>;
 
-    (authorizeRole as jest.Mock).mockResolvedValue(true);
     (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
     (prismaMock.pizza.findUnique as jest.Mock).mockResolvedValue({
       id: "1",
       name: "Old pizza",
-    }); // Simulate an existing pizza
+    });
+    (prismaMock.pizza.findFirst as jest.Mock).mockResolvedValue(null);
     (prismaMock.pizza.update as jest.Mock).mockResolvedValue({
       id: "1",
       name: "Updated pizza",
@@ -254,11 +263,19 @@ describe("PUT /api/pizzas/update", () => {
     });
 
     const response = await PUT(mockReq as NextRequest);
-    const responseJson = await response.json(); // Convert NextResponse to JSON
+    const responseJson = await response.json();
 
-    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
     expect(prismaMock.pizza.findUnique).toHaveBeenCalledWith({
       where: { id: "1" },
+    });
+    expect(prismaMock.pizza.findFirst).toHaveBeenCalledWith({
+      where: {
+        name: {
+          equals: "updated pizza",
+          mode: "insensitive",
+        },
+      },
     });
     expect(prismaMock.pizza.update).toHaveBeenCalledWith({
       where: { id: "1" },
@@ -266,7 +283,10 @@ describe("PUT /api/pizzas/update", () => {
         name: "Updated pizza",
         description: "Updated description",
         imageUrl: "Updated imageUrl",
-        toppings: { connect: [{ id: "101" }, { id: "102" }] },
+        toppings: {
+          set: [],
+          connect: [{ id: "101" }, { id: "102" }],
+        },
       },
     });
     expect(responseJson).toEqual({
@@ -274,7 +294,6 @@ describe("PUT /api/pizzas/update", () => {
       message: "Pizza updated successfully!",
     });
   });
-
   it("should return an error if the pizza does not exist", async () => {
     const mockReq = {
       json: jest.fn().mockResolvedValue({
@@ -286,15 +305,13 @@ describe("PUT /api/pizzas/update", () => {
       }),
     } as Partial<NextRequest>;
 
-    (authorizeRole as jest.Mock).mockResolvedValue(true);
     (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
-
     (prismaMock.pizza.findUnique as jest.Mock).mockResolvedValue(null); // Simulate no existing pizza
 
     const response = await PUT(mockReq as NextRequest);
     const responseJson = await response.json(); // Convert NextResponse to JSON
 
-    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
     expect(prismaMock.pizza.findUnique).toHaveBeenCalledWith({
       where: { id: "999" },
     });
@@ -316,7 +333,6 @@ describe("PUT /api/pizzas/update", () => {
       }),
     } as Partial<NextRequest>;
 
-    (authorizeRole as jest.Mock).mockResolvedValue(true);
     (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
 
     (prismaMock.pizza.findUnique as jest.Mock).mockResolvedValue({
@@ -324,16 +340,16 @@ describe("PUT /api/pizzas/update", () => {
       name: "Old pizza",
       description: "Old description",
       imageUrl: "Old imageUrl",
-    }); // Simulate an existing topping
+    });
 
     (prismaMock.pizza.update as jest.Mock).mockImplementation(() => {
       throw new Error("Failed to update pizza");
-    }); // Simulate an error during update
+    });
 
     const response = await PUT(mockReq as NextRequest);
     const responseJson = await response.json(); // Convert NextResponse to JSON
 
-    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
     expect(prismaMock.pizza.findUnique).toHaveBeenCalledWith({
       where: { id: "1" },
     });
@@ -343,7 +359,7 @@ describe("PUT /api/pizzas/update", () => {
         name: "Faulty pizza",
         description: "Faulty description",
         imageUrl: "Faulty imageUrl",
-        toppings: { connect: [{ id: "101" }] },
+        toppings: { set: [], connect: [{ id: "101" }] },
       },
     });
     expect(responseJson).toEqual({
@@ -366,7 +382,7 @@ describe("PUT /api/pizzas/update", () => {
     const response = await PUT(mockReq as NextRequest);
     const responseJson = await response.json(); // Convert NextResponse to JSON
 
-    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
     expect(prismaMock.pizza.findUnique).not.toHaveBeenCalled();
     expect(prismaMock.pizza.update).not.toHaveBeenCalled();
     expect(responseJson).toEqual({
@@ -400,7 +416,7 @@ describe("DELETE /api/pizzas/delete", () => {
     const response = await DELETE(mockReq as NextRequest);
     const responseJson = await response.json(); // Convert NextResponse to JSON
 
-    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
     expect(prismaMock.pizza.findUnique).toHaveBeenCalledWith({
       where: { id: "1" },
     });
@@ -426,7 +442,7 @@ describe("DELETE /api/pizzas/delete", () => {
     const response = await DELETE(mockReq as NextRequest);
     const responseJson = await response.json(); // Convert NextResponse to JSON
 
-    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
     expect(prismaMock.pizza.findUnique).toHaveBeenCalledWith({
       where: { id: "999" },
     });
@@ -457,7 +473,7 @@ describe("DELETE /api/pizzas/delete", () => {
     const response = await DELETE(mockReq as NextRequest);
     const responseJson = await response.json(); // Convert NextResponse to JSON
 
-    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
     expect(prismaMock.pizza.findUnique).toHaveBeenCalledWith({
       where: { id: "1" },
     });
@@ -480,7 +496,7 @@ describe("DELETE /api/pizzas/delete", () => {
     const response = await DELETE(mockReq as NextRequest);
     const responseJson = await response.json(); // Convert NextResponse to JSON
 
-    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
     expect(prismaMock.pizza.findUnique).not.toHaveBeenCalled();
     expect(prismaMock.pizza.delete).not.toHaveBeenCalled();
     expect(responseJson).toEqual({

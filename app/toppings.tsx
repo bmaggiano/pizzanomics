@@ -213,11 +213,11 @@ export default function Toppings({
               Our pizzas are made with the highest quality ingredients
             </h2>
             <h3 className="text-lg text-gray-500 mb-4">
-              As a chef at Pizzanomics, you can add your own toppings to our
+              As an owner at Pizzanomics, you can add your own toppings to our
               database of toppings.
             </h3>
           </div>
-          {user && user.role === "chef" ? (
+          {user && user.role === "owner" ? (
             <AddTopping pizzas={pizzas} />
           ) : (
             <Button disabled variant={"outline"}>
@@ -232,7 +232,7 @@ export default function Toppings({
                 key={topping.id}
                 className="w-[150px] relative flex flex-col items-center"
               >
-                {user && user.role === "chef" && (
+                {user && user.role === "owner" && (
                   <EditTopping pizzas={pizzas} topping={topping} />
                 )}
                 <CardHeader className="p-4">

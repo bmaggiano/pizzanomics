@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 jest.mock("../clients/prismaClient", () => ({
   topping: {
     findUnique: jest.fn(),
+    findFirst: jest.fn(),
     findMany: jest.fn(),
     create: jest.fn(),
     update: jest.fn(),
@@ -101,9 +102,14 @@ describe("POST /api/topping/create", () => {
     expect(response).toBeInstanceOf(NextResponse);
     const responseJson = await response.json();
 
-    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
-    expect(prismaMock.topping.findUnique).toHaveBeenCalledWith({
-      where: { name: "Test" },
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
+    expect(prismaMock.topping.findFirst).toHaveBeenCalledWith({
+      where: {
+        name: {
+          equals: "test",
+          mode: "insensitive",
+        },
+      },
     });
     expect(prismaMock.topping.create).toHaveBeenCalledWith({
       data: {
@@ -136,7 +142,7 @@ describe("POST /api/topping/create", () => {
 
     (authorizeRole as jest.Mock).mockResolvedValue(true);
     (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
-    (prismaMock.topping.findUnique as jest.Mock).mockResolvedValue({
+    (prismaMock.topping.findFirst as jest.Mock).mockResolvedValue({
       id: "1",
       name: "Test",
     });
@@ -145,9 +151,14 @@ describe("POST /api/topping/create", () => {
     expect(response).toBeInstanceOf(NextResponse);
     const responseJson = await response.json();
 
-    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
-    expect(prismaMock.topping.findUnique).toHaveBeenCalledWith({
-      where: { name: "Test" },
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
+    expect(prismaMock.topping.findFirst).toHaveBeenCalledWith({
+      where: {
+        name: {
+          equals: "test",
+          mode: "insensitive",
+        },
+      },
     });
     expect(prismaMock.topping.create).not.toHaveBeenCalled();
     expect(responseJson).toEqual({
@@ -179,7 +190,7 @@ describe("POST /api/topping/create", () => {
     expect(response).toBeInstanceOf(NextResponse);
     const responseJson = await response.json();
 
-    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
     expect(responseJson).toEqual({
       success: false,
       message: "Failed to add topping",
@@ -204,7 +215,7 @@ describe("POST /api/topping/create", () => {
     expect(response).toBeInstanceOf(NextResponse);
     const responseJson = await response.json();
 
-    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
     expect(prismaMock.topping.findUnique).not.toHaveBeenCalled();
     expect(prismaMock.topping.create).not.toHaveBeenCalled();
     expect(responseJson).toEqual({
@@ -242,7 +253,7 @@ describe("PUT /api/topping/update", () => {
     const response = await PUT(mockReq as NextRequest);
     const responseJson = await response.json(); // Convert NextResponse to JSON
 
-    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
     expect(prismaMock.topping.findUnique).toHaveBeenCalledWith({
       where: { id: "1" },
     });
@@ -276,7 +287,7 @@ describe("PUT /api/topping/update", () => {
     const response = await PUT(mockReq as NextRequest);
     const responseJson = await response.json(); // Convert NextResponse to JSON
 
-    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
     expect(prismaMock.topping.findUnique).toHaveBeenCalledWith({
       where: { id: "999" },
     });
@@ -311,7 +322,7 @@ describe("PUT /api/topping/update", () => {
     const response = await PUT(mockReq as NextRequest);
     const responseJson = await response.json(); // Convert NextResponse to JSON
 
-    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
     expect(prismaMock.topping.findUnique).toHaveBeenCalledWith({
       where: { id: "1" },
     });
@@ -342,7 +353,7 @@ describe("PUT /api/topping/update", () => {
     const response = await PUT(mockReq as NextRequest);
     const responseJson = await response.json(); // Convert NextResponse to JSON
 
-    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
     expect(prismaMock.topping.findUnique).not.toHaveBeenCalled();
     expect(prismaMock.topping.update).not.toHaveBeenCalled();
     expect(responseJson).toEqual({
@@ -376,7 +387,7 @@ describe("DELETE /api/topping/delete", () => {
     const response = await DELETE(mockReq as NextRequest);
     const responseJson = await response.json(); // Convert NextResponse to JSON
 
-    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
     expect(prismaMock.topping.findUnique).toHaveBeenCalledWith({
       where: { id: "1" },
     });
@@ -402,7 +413,7 @@ describe("DELETE /api/topping/delete", () => {
     const response = await DELETE(mockReq as NextRequest);
     const responseJson = await response.json(); // Convert NextResponse to JSON
 
-    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
     expect(prismaMock.topping.findUnique).toHaveBeenCalledWith({
       where: { id: "999" },
     });
@@ -433,7 +444,7 @@ describe("DELETE /api/topping/delete", () => {
     const response = await DELETE(mockReq as NextRequest);
     const responseJson = await response.json(); // Convert NextResponse to JSON
 
-    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
     expect(prismaMock.topping.findUnique).toHaveBeenCalledWith({
       where: { id: "1" },
     });
@@ -456,7 +467,7 @@ describe("DELETE /api/topping/delete", () => {
     const response = await DELETE(mockReq as NextRequest);
     const responseJson = await response.json(); // Convert NextResponse to JSON
 
-    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "chef");
+    expect(authorizeRole).toHaveBeenCalledWith(mockReq, "owner");
     expect(prismaMock.topping.findUnique).not.toHaveBeenCalled();
     expect(prismaMock.topping.delete).not.toHaveBeenCalled();
     expect(responseJson).toEqual({

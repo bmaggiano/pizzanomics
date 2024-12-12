@@ -3,7 +3,7 @@ import prisma from "../../../clients/prismaClient";
 import { authorizeRole } from "../../../utils/roleCheck";
 
 export async function PUT(req: NextRequest) {
-  const roleResponse = await authorizeRole(req, "owner");
+  const roleResponse = await authorizeRole(req, "chef");
   if (!roleResponse || roleResponse.status !== 200) {
     return NextResponse.json(
       {
@@ -13,6 +13,7 @@ export async function PUT(req: NextRequest) {
       { status: 401 }
     );
   }
+
   try {
     const body = await req.json();
 
@@ -30,13 +31,39 @@ export async function PUT(req: NextRequest) {
       );
     }
 
+    const normalizedName = body?.name?.toLowerCase() || "";
+
+    // Skip name uniqueness check if the name hasn't changed
+    if (normalizedName !== existingPizza.name.toLowerCase()) {
+      const nameInUse = await prisma.pizza.findFirst({
+        where: {
+          name: {
+            equals: normalizedName, // Normalize for comparison
+            mode: "insensitive", // Case-insensitive matching
+          },
+        },
+      });
+
+      if (nameInUse) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "Pizza name already exists",
+          },
+          { status: 400 }
+        );
+      }
+    }
+
+    // Update the pizza, including toppings
     await prisma.pizza.update({
       where: { id: body?.id || "" },
       data: {
-        name: body?.name || "",
-        description: body?.description || "",
-        imageUrl: body?.imageUrl || "",
+        name: body?.name || existingPizza.name,
+        description: body?.description || existingPizza.description,
+        imageUrl: body?.imageUrl || existingPizza.imageUrl,
         toppings: {
+          set: [], // Clear current toppings
           connect:
             body?.toppings?.map((topping: { id: string }) => ({
               id: topping.id,
@@ -44,6 +71,7 @@ export async function PUT(req: NextRequest) {
         },
       },
     });
+
     return NextResponse.json({
       success: true,
       message: "Pizza updated successfully!",

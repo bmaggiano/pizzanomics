@@ -255,11 +255,11 @@ export default function Pizzas({
               Our world famous pizzas are made fresh to order
             </h2>
             <h3 className="text-lg text-gray-500 mb-4">
-              As an owner at Pizzanomics you can add your own pizzas to our
+              As a chef at Pizzanomics you can add your own pizzas to our
               database of pizzas.
             </h3>
           </div>
-          {user && user.role === "owner" ? (
+          {user && user.role === "chef" ? (
             <AddPizza toppings={toppings} />
           ) : (
             <Button variant={"outline"} disabled>
@@ -271,7 +271,7 @@ export default function Pizzas({
           <div className="flex justify-start gap-6 py-4">
             {pizzas.map((pizza) => (
               <Card key={pizza.id} className="w-[220px] h-[340px] relative">
-                {user && user.role === "owner" && (
+                {user && user.role === "chef" && (
                   <EditPizza pizzas={pizza} topping={toppings} />
                 )}
                 <CardHeader className="m-0 p-0">
