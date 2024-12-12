@@ -30,11 +30,15 @@ describe("getPizzas", () => {
 
   it("should retrieve a list of pizzas", async () => {
     const mockPizzas = [
-      { id: "1", name: "Cheese Pizza", pizzas: [{ id: "1", name: "Cheese" }] },
+      {
+        id: "1",
+        name: "Cheese Pizza",
+        toppings: [{ id: "1", name: "Cheese" }],
+      },
       {
         id: "2",
         name: "Pepperoni Pizza",
-        pizzas: [{ id: "2", name: "Pepperoni" }],
+        toppings: [{ id: "2", name: "Pepperoni" }],
       },
     ];
 
@@ -91,7 +95,6 @@ describe("POST /api/pizzas/create", () => {
       }),
     });
 
-    (authorizeRole as jest.Mock).mockResolvedValue(true);
     (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
     (prismaMock.pizza.findUnique as jest.Mock).mockResolvedValue(null);
     (prismaMock.pizza.create as jest.Mock).mockResolvedValue({
@@ -148,7 +151,6 @@ describe("POST /api/pizzas/create", () => {
       }),
     });
 
-    (authorizeRole as jest.Mock).mockResolvedValue(true);
     (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
     (prismaMock.pizza.findFirst as jest.Mock).mockResolvedValue({
       id: "1",
@@ -434,7 +436,6 @@ describe("DELETE /api/pizzas/delete", () => {
       json: jest.fn().mockResolvedValue({ id: "999" }),
     } as Partial<NextRequest>;
 
-    (authorizeRole as jest.Mock).mockResolvedValue(true);
     (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
     // Mock authorization
     (prismaMock.pizza.findUnique as jest.Mock).mockResolvedValue(null); // Simulate no existing pizza
@@ -458,7 +459,6 @@ describe("DELETE /api/pizzas/delete", () => {
       json: jest.fn().mockResolvedValue({ id: "1" }),
     } as Partial<NextRequest>;
 
-    (authorizeRole as jest.Mock).mockResolvedValue(true);
     (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
     // Mock authorization
     (prismaMock.pizza.findUnique as jest.Mock).mockResolvedValue({
