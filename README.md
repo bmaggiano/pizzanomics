@@ -38,8 +38,8 @@ The projects main operations are the ability for an owner to CREATE, READ, UPDAT
 2. Clone the forked project to your local machine
 3. Run `npm install` to install all the dependencies
 4. Create a `.env` file in the root directory of the project and add the variables from template.env
-5. Run 'npm run test' to run the tests
-6. Run 'npm run dev' to start the application
+5. Run `npm run test` to run the tests
+6. Run `npm run dev` to start the application
 
 ## Future Development
 
