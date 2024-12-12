@@ -89,7 +89,7 @@ function EditPizza({ topping, pizzas }: { topping: Topping[]; pizzas: Pizza }) {
     e.preventDefault();
     console.log("handleDelete");
     try {
-      const result = await fetch("/api/toppings/delete", {
+      const result = await fetch("/api/pizzas/delete", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
