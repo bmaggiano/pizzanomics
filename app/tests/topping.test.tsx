@@ -89,7 +89,6 @@ describe("POST /api/topping/create", () => {
       }),
     });
 
-    (authorizeRole as jest.Mock).mockResolvedValue(true);
     (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
     (prismaMock.topping.findUnique as jest.Mock).mockResolvedValue(null);
     (prismaMock.topping.create as jest.Mock).mockResolvedValue({
@@ -140,7 +139,6 @@ describe("POST /api/topping/create", () => {
       }),
     });
 
-    (authorizeRole as jest.Mock).mockResolvedValue(true);
     (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
     (prismaMock.topping.findFirst as jest.Mock).mockResolvedValue({
       id: "1",
@@ -179,7 +177,6 @@ describe("POST /api/topping/create", () => {
       }),
     });
 
-    (authorizeRole as jest.Mock).mockResolvedValue(true);
     (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
     (prismaMock.topping.findUnique as jest.Mock).mockResolvedValue(null);
     (prismaMock.topping.create as jest.Mock).mockRejectedValue(
@@ -290,7 +287,6 @@ describe("PUT /api/topping/update", () => {
       }),
     } as Partial<NextRequest>;
 
-    (authorizeRole as jest.Mock).mockResolvedValue(true);
     (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
 
     (prismaMock.topping.findUnique as jest.Mock).mockResolvedValue(null); // Simulate no existing topping
@@ -386,7 +382,6 @@ describe("DELETE /api/topping/delete", () => {
       json: jest.fn().mockResolvedValue({ id: "1" }),
     } as Partial<NextRequest>;
 
-    (authorizeRole as jest.Mock).mockResolvedValue(true);
     (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
     // Mock authorization
     (prismaMock.topping.findUnique as jest.Mock).mockResolvedValue({
@@ -419,7 +414,6 @@ describe("DELETE /api/topping/delete", () => {
       json: jest.fn().mockResolvedValue({ id: "999" }),
     } as Partial<NextRequest>;
 
-    (authorizeRole as jest.Mock).mockResolvedValue(true);
     (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
     // Mock authorization
     (prismaMock.topping.findUnique as jest.Mock).mockResolvedValue(null); // Simulate no existing topping
@@ -443,7 +437,6 @@ describe("DELETE /api/topping/delete", () => {
       json: jest.fn().mockResolvedValue({ id: "1" }),
     } as Partial<NextRequest>;
 
-    (authorizeRole as jest.Mock).mockResolvedValue(true);
     (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
     // Mock authorization
     (prismaMock.topping.findUnique as jest.Mock).mockResolvedValue({
