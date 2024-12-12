@@ -21,6 +21,7 @@ import AvatarCircles from "@/components/ui/avatar-circles";
 import { useToast } from "@/hooks/use-toast";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Checkbox } from "@/components/ui/checkbox";
+import toppingFetches from "./fetches/toppingFetches";
 
 function EditTopping({
   topping,
@@ -45,64 +46,29 @@ function EditTopping({
   }, [open, topping]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setEditLoading(true);
-    try {
-      const result = await fetch("/api/toppings/update", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id: topping.id,
-          name: toppingName,
-          pizzas: onPizza,
-        }),
-      });
-      if (result.ok) {
-        toast({
-          title: "Topping edited successfully!",
-        });
-        setMessage("");
-        router.refresh();
-        setOpen(false);
-      } else {
-        const error = await result.json();
-        setMessage(error.message);
-      }
-    } catch (error) {
-      console.error("Error adding topping:", error);
-    }
-    setEditLoading(false);
+    await toppingFetches.updateTopping(
+      e,
+      setEditLoading,
+      toast,
+      router,
+      setMessage,
+      setOpen,
+      topping,
+      toppingName,
+      onPizza as Pizza[]
+    );
   };
 
   const handleDelete = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const result = await fetch("/api/toppings/delete", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id: topping.id }),
-      });
-
-      if (result.ok) {
-        toast({
-          title: "Topping deleted successfully!",
-        });
-        setMessage("");
-        router.refresh();
-        setOpen(false);
-      } else {
-        const error = await result.json();
-        setMessage(error.message);
-      }
-    } catch (error) {
-      console.error("Error deleting topping:", error);
-    }
-    setLoading(false);
+    await toppingFetches.deleteTopping(
+      e,
+      setLoading,
+      toast,
+      router,
+      setMessage,
+      setOpen,
+      topping
+    );
   };
 
   const handleAddPizzas = (checked: boolean, pizza: Pizza) => {

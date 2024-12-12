@@ -27,6 +27,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Edit, Loader2 } from "lucide-react";
+import pizzaFetches from "./fetches/pizzaFetches";
 
 function EditPizza({ topping, pizzas }: { topping: Topping[]; pizzas: Pizza }) {
   const router = useRouter();
@@ -56,66 +57,31 @@ function EditPizza({ topping, pizzas }: { topping: Topping[]; pizzas: Pizza }) {
   }, [pizzaDescription]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setEditLoading(true);
-    try {
-      const result = await fetch("/api/pizzas/update", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id: pizzas.id,
-          name: pizzaName,
-          description: pizzaDescription,
-          imageUrl: pizzaImage,
-          toppings: onTopping,
-        }),
-      });
-      if (result.ok) {
-        toast({
-          title: "Pizza edited successfully!",
-        });
-        setMessage("");
-        router.refresh();
-        setOpen(false);
-      } else {
-        const error = await result.json();
-        setMessage(error.message);
-      }
-    } catch (error) {
-      console.error("Error adding pizza:", error);
-    }
-    setEditLoading(false);
+    await pizzaFetches.updatePizza(
+      e,
+      setEditLoading,
+      toast,
+      router,
+      setMessage,
+      setOpen,
+      pizzas,
+      pizzaName,
+      pizzaImage || "",
+      pizzaDescription,
+      onTopping
+    );
   };
 
   const handleDelete = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const result = await fetch("/api/pizzas/delete", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id: pizzas.id }),
-      });
-
-      if (result.ok) {
-        toast({
-          title: "Pizza deleted successfully!",
-        });
-        setMessage("");
-        router.refresh();
-        setOpen(false);
-      } else {
-        const error = await result.json();
-        setMessage(error.message);
-      }
-    } catch (error) {
-      console.error("Error deleting pizza:", error);
-    }
-    setLoading(false);
+    await pizzaFetches.deletePizza(
+      e,
+      setLoading,
+      toast,
+      router,
+      setMessage,
+      setOpen,
+      pizzas
+    );
   };
 
   const handleAddToppings = (checked: boolean, topping: Topping) => {
