@@ -15,30 +15,32 @@ import Link from "next/link";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
 
-export default function LoginForm() {
+export default function LoginForm({ title }: { title?: string }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     const result = await login(email, password);
     if (result.success) {
       setMessage("Login successful!");
-      // Here you would typically store the token in localStorage or a secure cookie
-      // and redirect the user to a protected route
     } else {
       setMessage(result.message || "Login failed");
     }
+    setLoading(false);
   };
 
   return (
     <>
       <Dialog>
         <DialogTrigger asChild>
-          <Button className="font-semibold" variant={"outline"}>
-            Log in
+          <Button className="font-semibold text-black" variant={"outline"}>
+            {title || "Login"}
           </Button>
         </DialogTrigger>
         <DialogContent>
@@ -71,9 +73,15 @@ export default function LoginForm() {
                 required
               />
             </div>
-            <Button className="flex w-full" type="submit">
-              Log in
-            </Button>
+            {loading ? (
+              <Button disabled className="flex w-full">
+                <Loader2 className="animate-spin" /> Logging in
+              </Button>
+            ) : (
+              <Button className="flex w-full" type="submit">
+                Log in
+              </Button>
+            )}
             {message && (
               <p
                 className={cn(

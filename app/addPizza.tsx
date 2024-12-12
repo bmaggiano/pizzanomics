@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
+import { Loader2 } from "lucide-react";
 
 export default function AddPizza({ toppings }: { toppings: Topping[] }) {
   const [message, setMessage] = useState("");
@@ -26,6 +27,7 @@ export default function AddPizza({ toppings }: { toppings: Topping[] }) {
   const router = useRouter();
   const [descriptionCount, setDescriptionCount] = useState(0);
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleAddToppings = (checked: boolean, topping: Topping) => {
     if (checked) {
@@ -48,6 +50,7 @@ export default function AddPizza({ toppings }: { toppings: Topping[] }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const result = await fetch("/api/pizzas/create", {
         method: "POST",
@@ -75,6 +78,7 @@ export default function AddPizza({ toppings }: { toppings: Topping[] }) {
     } catch (error) {
       console.error("Error adding topping:", error);
     }
+    setLoading(false);
   };
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -143,9 +147,15 @@ export default function AddPizza({ toppings }: { toppings: Topping[] }) {
               </label>
             </div>
           ))}
-          <Button className="flex w-full" type="submit">
-            Add Pizza
-          </Button>
+          {loading ? (
+            <Button disabled className="flex w-full">
+              <Loader2 className="animate-spin" /> Adding Pizza
+            </Button>
+          ) : (
+            <Button className="flex w-full" type="submit">
+              Add Pizza
+            </Button>
+          )}
           {message && (
             <p
               className={cn(

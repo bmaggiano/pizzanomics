@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Pizza, Topping } from "./types/types";
+import { Pizza, Topping, User } from "./types/types";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import AddPizza from "./addPizza";
@@ -26,7 +26,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Edit } from "lucide-react";
+import { Edit, Loader2 } from "lucide-react";
 
 function EditPizza({ topping, pizzas }: { topping: Topping[]; pizzas: Pizza }) {
   const router = useRouter();
@@ -42,6 +42,8 @@ function EditPizza({ topping, pizzas }: { topping: Topping[]; pizzas: Pizza }) {
   const [open, setOpen] = useState(false);
   const [descriptionCount, setDescriptionCount] = useState(0);
   const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+  const [eidtLoading, setEditLoading] = useState(false);
 
   useEffect(() => {
     if (open && pizzas?.toppings) {
@@ -55,6 +57,7 @@ function EditPizza({ topping, pizzas }: { topping: Topping[]; pizzas: Pizza }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setEditLoading(true);
     try {
       const result = await fetch("/api/pizzas/update", {
         method: "PUT",
@@ -81,13 +84,14 @@ function EditPizza({ topping, pizzas }: { topping: Topping[]; pizzas: Pizza }) {
         setMessage(error.message);
       }
     } catch (error) {
-      console.error("Error adding topping:", error);
+      console.error("Error adding pizza:", error);
     }
+    setEditLoading(false);
   };
 
   const handleDelete = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("handleDelete");
+    setLoading(true);
     try {
       const result = await fetch("/api/pizzas/delete", {
         method: "DELETE",
@@ -99,7 +103,7 @@ function EditPizza({ topping, pizzas }: { topping: Topping[]; pizzas: Pizza }) {
 
       if (result.ok) {
         toast({
-          title: "Topping deleted successfully!",
+          title: "Pizza deleted successfully!",
         });
         setMessage("");
         router.refresh();
@@ -109,8 +113,9 @@ function EditPizza({ topping, pizzas }: { topping: Topping[]; pizzas: Pizza }) {
         setMessage(error.message);
       }
     } catch (error) {
-      console.error("Error deleting topping:", error);
+      console.error("Error deleting pizza:", error);
     }
+    setLoading(false);
   };
 
   const handleAddToppings = (checked: boolean, topping: Topping) => {
@@ -199,10 +204,22 @@ function EditPizza({ topping, pizzas }: { topping: Topping[]; pizzas: Pizza }) {
             </div>
           ))}
           <div className="flex justify-end gap-4 w-full">
-            <Button type="submit">Save</Button>
-            <Button variant={"destructive"} onClick={(e) => handleDelete(e)}>
-              Delete
-            </Button>
+            {eidtLoading ? (
+              <Button disabled>
+                <Loader2 className="animate-spin" /> Saving Pizza
+              </Button>
+            ) : (
+              <Button type="submit">Save</Button>
+            )}
+            {loading ? (
+              <Button disabled variant={"destructive"}>
+                <Loader2 className="animate-spin" /> Deleting Pizza
+              </Button>
+            ) : (
+              <Button variant={"destructive"} onClick={(e) => handleDelete(e)}>
+                Delete
+              </Button>
+            )}
           </div>
         </form>
         {message && (
@@ -221,9 +238,11 @@ function EditPizza({ topping, pizzas }: { topping: Topping[]; pizzas: Pizza }) {
 }
 
 export default function Pizzas({
+  user,
   pizzas,
   toppings,
 }: {
+  user: User | null;
   pizzas: Pizza[];
   toppings: Topping[];
 }) {
@@ -240,13 +259,21 @@ export default function Pizzas({
               database of pizzas.
             </h3>
           </div>
-          <AddPizza toppings={toppings} />
+          {user && user.role === "owner" ? (
+            <AddPizza toppings={toppings} />
+          ) : (
+            <Button variant={"outline"} disabled>
+              Add Pizza +
+            </Button>
+          )}
         </div>
         <ScrollArea className="w-full">
           <div className="flex justify-start gap-6 py-4">
             {pizzas.map((pizza) => (
               <Card key={pizza.id} className="w-[220px] h-[340px] relative">
-                <EditPizza pizzas={pizza} topping={toppings} />
+                {user && user.role === "owner" && (
+                  <EditPizza pizzas={pizza} topping={toppings} />
+                )}
                 <CardHeader className="m-0 p-0">
                   <Image
                     src={

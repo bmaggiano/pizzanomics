@@ -49,7 +49,6 @@ export default function SignUpForm() {
       formData.password,
       formData.role
     );
-    setIsLoading(false);
 
     if (result.success) {
       setMessage("Sign up successful!");
@@ -57,6 +56,7 @@ export default function SignUpForm() {
     } else {
       setMessage(result.message || "Sign up failed");
     }
+    setIsLoading(false);
   };
 
   return (
