@@ -13,9 +13,11 @@ export async function PUT(req: NextRequest) {
       { status: 401 }
     );
   }
+
   try {
     const body = await req.json();
 
+    // Fetch the existing topping from the database
     const existingTopping = await prisma.topping.findUnique({
       where: { id: body?.id || "" },
     });
@@ -32,30 +34,36 @@ export async function PUT(req: NextRequest) {
 
     const normalizedName = body?.name?.toLowerCase() || "";
 
-    const nameInUse = await prisma.topping.findFirst({
-      where: {
-        name: {
-          equals: normalizedName, // Normalize for comparison
-          mode: "insensitive", // Case-insensitive matching
+    // Skip name uniqueness check if the name hasn't changed
+    if (normalizedName !== existingTopping.name.toLowerCase()) {
+      // Check if a topping with the new name already exists
+      const nameInUse = await prisma.topping.findFirst({
+        where: {
+          name: {
+            equals: normalizedName, // Normalize for comparison
+            mode: "insensitive", // Case-insensitive matching
+          },
         },
-      },
-    });
+      });
 
-    if (nameInUse?.name.toLowerCase() === body?.name?.toLowerCase()) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Topping name already exists",
-        },
-        { status: 400 }
-      );
+      if (nameInUse) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "Topping name already exists",
+          },
+          { status: 400 }
+        );
+      }
     }
 
+    // Update the topping, including the associated pizzas
     await prisma.topping.update({
       where: { id: body?.id || "" },
       data: {
-        name: body?.name || "",
+        name: body?.name || existingTopping.name, // Keep the existing name if not updated
         pizzas: {
+          set: [], // Clear current pizza associations
           connect:
             body?.pizzas?.map((pizza: { id: string }) => ({
               id: pizza.id,
@@ -63,11 +71,12 @@ export async function PUT(req: NextRequest) {
         },
       },
     });
+
     return NextResponse.json({
       success: true,
       message: "Topping updated successfully!",
     });
-  } catch {
+  } catch (error) {
     return NextResponse.json(
       { success: false, message: "Failed to update topping" },
       { status: 500 }

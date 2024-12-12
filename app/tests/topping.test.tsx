@@ -238,12 +238,12 @@ describe("PUT /api/topping/update", () => {
       }),
     } as Partial<NextRequest>;
 
-    (authorizeRole as jest.Mock).mockResolvedValue(true);
     (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
     (prismaMock.topping.findUnique as jest.Mock).mockResolvedValue({
       id: "1",
       name: "Old Topping",
     }); // Simulate an existing topping
+    (prismaMock.topping.findFirst as jest.Mock).mockResolvedValue(null); // No existing topping with the same name
     (prismaMock.topping.update as jest.Mock).mockResolvedValue({
       id: "1",
       name: "Updated Topping",
@@ -257,11 +257,22 @@ describe("PUT /api/topping/update", () => {
     expect(prismaMock.topping.findUnique).toHaveBeenCalledWith({
       where: { id: "1" },
     });
+    expect(prismaMock.topping.findFirst).toHaveBeenCalledWith({
+      where: {
+        name: {
+          equals: "updated topping",
+          mode: "insensitive",
+        },
+      },
+    });
     expect(prismaMock.topping.update).toHaveBeenCalledWith({
       where: { id: "1" },
       data: {
         name: "Updated Topping",
-        pizzas: { connect: [{ id: "101" }, { id: "102" }] },
+        pizzas: {
+          set: [], // Clear existing connections
+          connect: [{ id: "101" }, { id: "102" }],
+        },
       },
     });
     expect(responseJson).toEqual({
@@ -307,13 +318,14 @@ describe("PUT /api/topping/update", () => {
       }),
     } as Partial<NextRequest>;
 
-    (authorizeRole as jest.Mock).mockResolvedValue(true);
     (authorizeRole as jest.Mock).mockResolvedValue({ status: 200 });
 
     (prismaMock.topping.findUnique as jest.Mock).mockResolvedValue({
       id: "1",
       name: "Old Topping",
     }); // Simulate an existing topping
+
+    (prismaMock.topping.findFirst as jest.Mock).mockResolvedValue(null); // No existing topping with the same name
 
     (prismaMock.topping.update as jest.Mock).mockImplementation(() => {
       throw new Error("Failed to update topping");
@@ -326,13 +338,15 @@ describe("PUT /api/topping/update", () => {
     expect(prismaMock.topping.findUnique).toHaveBeenCalledWith({
       where: { id: "1" },
     });
-    expect(prismaMock.topping.update).toHaveBeenCalledWith({
-      where: { id: "1" },
-      data: {
-        name: "Faulty Topping",
-        pizzas: { connect: [{ id: "101" }] },
+    expect(prismaMock.topping.findFirst).toHaveBeenCalledWith({
+      where: {
+        name: {
+          equals: "faulty topping",
+          mode: "insensitive",
+        },
       },
     });
+    expect(prismaMock.topping.update).toHaveBeenCalled();
     expect(responseJson).toEqual({
       success: false,
       message: "Failed to update topping",
