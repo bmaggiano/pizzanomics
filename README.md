@@ -42,7 +42,7 @@ Pizzanomics is a full stack web application that allows owners and chefs of a fi
 
 ## Testing
 
-The projects main operations are the ability for a chef to CREATE, READ, UPDATE, and DELETE pizzas as well as the ability for an owner to CREATE, READ, UPDATE, and DELETE ingredients. The main testing framework used is JEST and each one of these CRUD operations as well as user Authentication are tested individually.
+The projects main operations are the ability for a chef to CREATE, READ, UPDATE, and DELETE pizzas as well as the ability for an owner to CREATE, READ, UPDATE, and DELETE ingredients. The main testing framework used is JEST and each one of these CRUD operations as well as user Authentication are tested individually. While using a test database was considered for this project, it was ultimately decided to just test against specific functionality using mocks for prisma functions and expected results rather than creating a separate test database. On bigger projects and companies I would absolutely suggest to have an entirely separate test database, test site, etc. to make sure only proper running code is executed in production.
 
 This project is also protected by Github's rulesets and those rules can be found in the tests.yml file. These tests must pass for a PR to go through.
 
@@ -63,6 +63,7 @@ The sky is truly the limit for this project and there were many features that I 
 2. A chef/owner settings page which allows for the owner or chef to update their profile information, password and delete their account.
 3. Sorting and filtering if the database became too crowded with pizzas and toppings. I chose to use horizontal for the time being as I predict there won't be too many pizzas or toppings added.
 4. Google authentication for ease of sign ups and log in.
+5. Separate actual db from test db and run actual tests to the test database.
 
 ## More Screenshots
 
