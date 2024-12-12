@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
   const title = searchParams.get("title") || "Pizzanomics";
   const description = "Add a little pizza to your life!";
 
-  const pizzaImageUrl = "https://pizzanomics.vercel.app/pizza.png";
+  const pizzaImageUrl = "https://pizzanomics.vercel.app/pizzaClipart.png";
   return new ImageResponse(
     (
       <div

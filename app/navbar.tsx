@@ -16,10 +16,10 @@ export default function Navbar() {
         <div className="flex items-center sm:justify-between w-full gap-4">
           <Link className="flex items-center" href="/">
             <Image
-              src="/pizza.png"
+              src="/pizzaClipart.png"
               alt="Pizzanomics Logo"
-              height={25}
-              width={25}
+              height={30}
+              width={30}
               className="mr-2"
             />
             <h1 className="text-2xl tracking-tight font-bold">Pizzanomics</h1>
