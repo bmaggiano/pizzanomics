@@ -63,10 +63,9 @@ export default function AddPizza({ toppings }: { toppings: Topping[] }) {
           toppings: onTopping,
         }),
       });
-      console.log(result);
       if (result.ok) {
         toast({
-          title: "Topping added successfully!",
+          title: "Pizza added successfully!",
         });
         router.refresh();
         setMessage("");
