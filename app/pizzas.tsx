@@ -32,12 +32,15 @@ function EditPizza({ topping, pizzas }: { topping: Topping[]; pizzas: Pizza }) {
   const router = useRouter();
   const [message, setMessage] = useState("");
   const [pizzaName, setPizzaName] = useState(pizzas.name);
-  const [pizzaDescription, setPizzaDescription] = useState(pizzas.description);
+  const [pizzaDescription, setPizzaDescription] = useState(
+    pizzas.description || ""
+  );
   const [pizzaImage, setPizzaImage] = useState(pizzas.imageUrl);
   const [onTopping, setOnTopping] = useState<{ id: number; name: string }[]>(
     []
   );
   const [open, setOpen] = useState(false);
+  const [descriptionCount, setDescriptionCount] = useState(0);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -45,6 +48,10 @@ function EditPizza({ topping, pizzas }: { topping: Topping[]; pizzas: Pizza }) {
       setOnTopping(pizzas.toppings);
     }
   }, [open, pizzas]);
+
+  useEffect(() => {
+    setDescriptionCount(pizzaDescription.length);
+  }, [pizzaDescription]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,6 +64,8 @@ function EditPizza({ topping, pizzas }: { topping: Topping[]; pizzas: Pizza }) {
         body: JSON.stringify({
           id: pizzas.id,
           name: pizzaName,
+          description: pizzaDescription,
+          imageUrl: pizzaImage,
           toppings: onTopping,
         }),
       });
@@ -145,13 +154,19 @@ function EditPizza({ topping, pizzas }: { topping: Topping[]; pizzas: Pizza }) {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="pizzaDescription">Description</Label>
+            <Label htmlFor="pizzaDescription">
+              Description {`(80 characters max)`}{" "}
+              <span className="text-xs text-gray-700">
+                {descriptionCount}/80
+              </span>
+            </Label>
             <Input
               id="pizzaDescription"
               placeholder="A thin crust classic with tomato, mozzarella, and basil."
               value={pizzaDescription || ""}
               onChange={(e) => setPizzaDescription(e.target.value)}
               required
+              maxLength={80}
             />
           </div>
           <div className="space-y-2">
@@ -230,7 +245,7 @@ export default function Pizzas({
         <ScrollArea className="w-full">
           <div className="flex justify-start gap-6 py-4">
             {pizzas.map((pizza) => (
-              <Card key={pizza.id} className="w-[220px] relative">
+              <Card key={pizza.id} className="w-[220px] h-[340px] relative">
                 <EditPizza pizzas={pizza} topping={toppings} />
                 <CardHeader className="m-0 p-0">
                   <Image
@@ -241,13 +256,16 @@ export default function Pizzas({
                     alt={pizza.name}
                     width={220}
                     height={200}
-                    className="rounded-t-xl"
+                    className="rounded-t-xl max-h-[140px] object-cover"
                   />
                   <CardTitle className="p-2">{pizza.name}</CardTitle>
+                  <span className="px-2 text-sm text-gray-700">
+                    Ingredients:
+                  </span>
                   <ScrollArea className="p-2 w-[100%] whitespace-nowrap rounded-md">
                     {pizza.toppings?.map((topping) => (
                       <Badge
-                        className="mr-1"
+                        className="mr-1 text-gray-700 font-normal"
                         variant={"outline"}
                         key={topping.id}
                       >
@@ -256,8 +274,8 @@ export default function Pizzas({
                     ))}
                     <ScrollBar className="mt-2" orientation="horizontal" />
                   </ScrollArea>
-                  <CardDescription className="p-2 m-0">
-                    {pizza?.description || "No description."}
+                  <CardDescription className="text-elipsis p-2 m-0">
+                    - {pizza?.description || "No description."}
                   </CardDescription>
                 </CardHeader>
               </Card>

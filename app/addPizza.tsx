@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 
@@ -24,6 +24,7 @@ export default function AddPizza({ toppings }: { toppings: Topping[] }) {
   const [onTopping, setOnTopping] = useState<{ name: string }[]>([]);
   const { toast } = useToast();
   const router = useRouter();
+  const [descriptionCount, setDescriptionCount] = useState(0);
   const [open, setOpen] = useState(false);
 
   const handleAddToppings = (checked: boolean, topping: Topping) => {
@@ -40,6 +41,10 @@ export default function AddPizza({ toppings }: { toppings: Topping[] }) {
       );
     }
   };
+
+  useEffect(() => {
+    setDescriptionCount(pizzaDescription.length);
+  }, [pizzaDescription]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,13 +98,19 @@ export default function AddPizza({ toppings }: { toppings: Topping[] }) {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="pizzaDescription">Description</Label>
+            <Label htmlFor="pizzaDescription">
+              Description {`(80 characters max)`}{" "}
+              <span className="text-xs text-gray-700">
+                {descriptionCount}/80
+              </span>
+            </Label>
             <Input
               id="pizzaDescription"
               placeholder="A thin crust classic with tomato, mozzarella, and basil."
               value={pizzaDescription}
               onChange={(e) => setPizzaDescription(e.target.value)}
               required
+              maxLength={80}
             />
           </div>
           <div className="space-y-2">

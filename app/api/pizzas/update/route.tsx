@@ -34,6 +34,8 @@ export async function PUT(req: NextRequest) {
       where: { id: body?.id || "" },
       data: {
         name: body?.name || "",
+        description: body?.description || "",
+        imageUrl: body?.imageUrl || "",
         toppings: {
           connect:
             body?.toppings?.map((topping: { id: string }) => ({
