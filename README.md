@@ -1,5 +1,7 @@
 # PizzaNomics
 
+<img width="1453" alt="Screenshot 2024-12-11 at 7 00 32 PM" src="https://github.com/user-attachments/assets/772b5447-b57b-4f22-aa3d-42e5da8c0f50" />
+
 ## Link to deployed application
 
 https://pizzanomics.vercel.app
