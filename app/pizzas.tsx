@@ -162,8 +162,7 @@ function EditPizza({ topping, pizzas }: { topping: Topping[]; pizzas: Pizza }) {
               id="pizzaImage"
               placeholder="https://images.unsplash.com/photos/1-1"
               value={pizzaImage || ""}
-              onChange={(e) => setPizzaDescription(e.target.value)}
-              required
+              onChange={(e) => setPizzaImage(e.target.value)}
             />
           </div>
           {topping?.map((topping) => (
