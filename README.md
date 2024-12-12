@@ -2,17 +2,24 @@
 
 <img width="1452" alt="Screenshot 2024-12-11 at 8 21 21 PM" src="https://github.com/user-attachments/assets/91b6249c-ce6a-4c29-a720-31959d6302a7" />
 
+## Table of Contents
+- [Link to deployed application](#link-to-deployed-application)
+- [Description](#description)
+- [Technologies](#technologies)
+- [Testing](#testing)
+- [Future development](#future-development)
+
 ## Link to deployed application
 
 https://pizzanomics.vercel.app
 
 ## Description
 
-Pizzanomics is a web application that allows owners and chefs of a fictional pizzeria to track their inventory of pizzas as well as their ingredients. This project is a standard CRUD application that draws inspiration from other popular pizza order applications such as Pizza Hut, Papa John's, and Grimaldi's.
+Pizzanomics is a full stack web application that allows owners and chefs of a fictional pizzeria to track their inventory of pizzas as well as their ingredients. This project is a standard CRUD application that draws inspiration from other popular pizza order applications such as Pizza Hut, Papa John's, and Grimaldi's.
 
 ## Technologies
 
-- Next.js: This was chosen as the framework for the project based on the personal familiarity of the framework as well as the fact that Next.js supports server-side rendering which increases the performance of the application for simple data fetching.
+- Next.js: This was chosen as the framework for the project based on the personal familiarity of the framework as well as the fact that Next.js supports server-side rendering which increases the performance of the application for simple data fetching. Next.js also supports client side rendering to make form data easily passed from client to server.
 
 - Tailwind CSS: The design framework used for this project. Allows for easy customization of the design of certain pages and components.
 
@@ -32,19 +39,19 @@ Pizzanomics is a web application that allows owners and chefs of a fictional piz
 
 - JSON web tokens: Allow for authentication and the JWTs are signed and coded as well as exist in HTTP only cookies for protection and authentication.
 
-## Testing and forking details
+## Testing
 
-The projects main operations are the ability for an owner to CREATE, READ, UPDATE, and DELETE pizzas as well as the ability for a chef to CREATE, READ, UPDATE, and DELETE ingredients. The main testing framework used is JEST and each one of these CRUD operations as well as user Authentication are tested individually. Fork this project and add your own features and functionality.
+The projects main operations are the ability for an owner to CREATE, READ, UPDATE, and DELETE pizzas as well as the ability for a chef to CREATE, READ, UPDATE, and DELETE ingredients. The main testing framework used is JEST and each one of these CRUD operations as well as user Authentication are tested individually.
 
-This project is also protected by Github's rulesets and those rules can be found in the tests.yml file.
+This project is also protected by Github's rulesets and those rules can be found in the tests.yml file. These tests must pass for a PR to go through.
 
 - Node V 16 or greater required.
 
 1. Fork this project
 2. Clone the forked project to your local machine
 3. Run `npm install` to install all the dependencies
-4. Create a `.env` file in the root directory of the project and add the variables from template.env
-5. Run `npm run test` to run the tests
+4. Create a `.env` file in the root directory of the project and add the variables from template.env (populate them with actual values)
+5. Run `npm run test` to run the tests (inside your github repo you will also need a `JWT_SECRET` that will be used for authentication testing)
 6. Run `npm run dev` to start the application
 
 ## Future Development
@@ -53,4 +60,5 @@ The sky is truly the limit for this project and there were many features that I 
 
 1. A chef/owner dashboard which allows for chefs and owners to view their inventory in a more database related manner.
 2. A chef/owner settings page which allows for the owner or chef to update their profile information, password and delete their account.
-3. Google authentication for ease of sign ups and log in.
+3. Sorting and filtering if the database became too crowded with pizzas and toppings. I chose to use horizontal for the time being as I predict there won't be too many pizzas or toppings added.
+4. Google authentication for ease of sign ups and log in.
