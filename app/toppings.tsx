@@ -55,7 +55,7 @@ function EditTopping({
       setOpen,
       topping,
       toppingName,
-      onPizza
+      onPizza as Pizza[]
     );
   };
 
