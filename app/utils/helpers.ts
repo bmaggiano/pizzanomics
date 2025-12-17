@@ -8,8 +8,10 @@ export const getToppings = async (): Promise<Topping[]> => {
       include: { pizzas: true },
     });
     return toppings as Topping[];
-  } catch {
-    throw new Error("Failed to fetch toppings");
+  } catch (error) {
+    // Return empty array if database is unavailable
+    console.error("Failed to fetch toppings:", error);
+    return [];
   }
 };
 
@@ -20,8 +22,10 @@ export const getPizzas = async (): Promise<Pizza[]> => {
       include: { toppings: true },
     });
     return pizzas as Pizza[];
-  } catch {
-    throw new Error("Failed to fetch pizzas");
+  } catch (error) {
+    // Return empty array if database is unavailable
+    console.error("Failed to fetch pizzas:", error);
+    return [];
   }
 };
 
@@ -30,7 +34,9 @@ export const getUsers = async (): Promise<User[]> => {
   try {
     const users = await prisma.user.findMany();
     return users as User[];
-  } catch {
-    throw new Error("Failed to fetch users");
+  } catch (error) {
+    // Return empty array if database is unavailable
+    console.error("Failed to fetch users:", error);
+    return [];
   }
 };
