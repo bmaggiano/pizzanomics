@@ -67,12 +67,15 @@ describe("getPizzas", () => {
     expect(pizzas).toEqual([]);
   });
 
-  it("should handle errors gracefully", async () => {
+  it("should handle errors gracefully and return empty array", async () => {
     (prismaMock.pizza.findMany as jest.Mock).mockImplementation(() => {
       throw new Error("Failed to fetch pizzas");
     }); // Simulate a Failed to fetch pizzas
 
-    await expect(getPizzas()).rejects.toThrow("Failed to fetch pizzas");
+    const pizzas = await getPizzas(); // Call the function
+
+    // Assert the function returns an empty array on error
+    expect(pizzas).toEqual([]);
   });
 });
 

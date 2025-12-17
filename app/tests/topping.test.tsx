@@ -63,12 +63,15 @@ describe("getToppings", () => {
     expect(toppings).toEqual([]);
   });
 
-  it("should handle errors gracefully", async () => {
+  it("should handle errors gracefully and return empty array", async () => {
     (prismaMock.topping.findMany as jest.Mock).mockImplementation(() => {
       throw new Error("Failed to fetch toppings");
     }); // Simulate a Failed to fetch toppings
 
-    await expect(getToppings()).rejects.toThrow("Failed to fetch toppings");
+    const toppings = await getToppings(); // Call the function
+
+    // Assert the function returns an empty array on error
+    expect(toppings).toEqual([]);
   });
 });
 
